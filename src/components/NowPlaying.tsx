@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
 import {
   ChevronLeft,
   Heart,
+  Pause,
   Play,
   Repeat,
   Shuffle,
@@ -10,18 +11,29 @@ import {
 } from "react-feather";
 
 import ReactSlider from "react-slider";
+import { Link } from "react-router-dom";
 
-export const MusicPlayer = () => {
+import { AudioContext } from "../contexts/AudioContext";
+
+export const NowPlaying: FC<{}> = () => {
+  const { currentSong, playSong, isPaused, time } = useContext(AudioContext);
+
   const [volume, setVolume] = useState<number>(0);
+
+  useEffect(() => {
+    playSong("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3");
+  }, []);
+
+  console.log("MusicPlayer render");
 
   return (
     <>
       <div className="flex mb-8">
-        <a
-          href="/"
+        <Link
+          to="/"
           className="hover:bg-gray-700 p-2 rounded-full inline-flex items-center">
           <ChevronLeft />
-        </a>
+        </Link>
         <button className="ml-auto hover:bg-gray-700 p-2 rounded-full inline-flex items-center text-teal-500">
           <Heart />
         </button>
@@ -48,9 +60,11 @@ export const MusicPlayer = () => {
           <SkipBack className="fill-current" />
         </button>
         <button className="bg-teal-500 hover:bg-teal-300 h-auto p-4 rounded-full inline-flex items-center shadow-lg">
-          <div className="w-8 h-8">
+          {isPaused ? (
             <Play size={36} className="text-gray-800 fill-current" />
-          </div>
+          ) : (
+            <Pause size={36} className="text-gray-800 fill-current" />
+          )}
         </button>
         <button className="hover:bg-gray-700 p-4 rounded-full inline-flex items-center">
           <SkipForward className="fill-current" />
