@@ -2,30 +2,32 @@ import React, { createContext, FC, PropsWithChildren, useState } from "react";
 import { useAudio } from "react-use";
 
 export interface AudioContextProps {
-  currentSong: string;
-  playSong: (song: string) => void;
-  isPaused: boolean;
-  time: number;
+  currentAudioSource: string;
+  playAudio: (song: string) => void;
+  isAudioPaused: boolean;
+  currentAudioTime: number;
+  totalAudioDuration: number
 }
 
 export const AudioContext = createContext<AudioContextProps>({
-  currentSong: "",
-  playSong: () => "",
-  isPaused: false,
-  time: 0
+  currentAudioSource: "",
+  playAudio: () => "",
+  isAudioPaused: false,
+  currentAudioTime: 0,
+  totalAudioDuration: 0
 });
 
 export const AudioProvider: FC = ({ children }: PropsWithChildren<{}>) => {
-  const [currentSong, setSong] = useState<string>(
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+  const [currentAudioSource, setAudioSource] = useState<string>(
+    "https://1.mp3-download.best/stream/-hYEGvH:hmTgP"
   );
   const [audio, state, controls, ref] = useAudio({
-    src: currentSong,
+    src: currentAudioSource,
     autoPlay: true
   });
 
-  const playSong = (songSrc: string) => {
-    setSong(songSrc);
+  const playAudio = (songSrc: string) => {
+    setAudioSource(songSrc);
     if (ref.current) {
       ref.current.src = songSrc;
       controls.play();
@@ -35,10 +37,11 @@ export const AudioProvider: FC = ({ children }: PropsWithChildren<{}>) => {
   return (
     <AudioContext.Provider
       value={{
-        currentSong,
-        playSong,
-        isPaused: state.paused,
-        time: state.time
+        currentAudioSource,
+        playAudio,
+        isAudioPaused: state.paused,
+        currentAudioTime: state.time,
+        totalAudioDuration: state.duration
       }}>
       {audio}
       {children}

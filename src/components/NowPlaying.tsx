@@ -1,5 +1,9 @@
 import React, { FC, useContext, useEffect, useState } from "react";
 import {
+  buildStyles,
+  CircularProgressbarWithChildren
+} from "react-circular-progressbar";
+import {
   ChevronLeft,
   Heart,
   Pause,
@@ -9,26 +13,29 @@ import {
   SkipBack,
   SkipForward
 } from "react-feather";
-
-import ReactSlider from "react-slider";
 import { Link } from "react-router-dom";
-
+import ReactSlider from "react-slider";
 import { AudioContext } from "../contexts/AudioContext";
 
 export const NowPlaying: FC<{}> = () => {
-  const { currentSong, playSong, isPaused, time } = useContext(AudioContext);
+  const {
+    playAudio,
+    isAudioPaused,
+    currentAudioTime,
+    totalAudioDuration
+  } = useContext(AudioContext);
 
   const [volume, setVolume] = useState<number>(0);
 
   useEffect(() => {
-    playSong("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3");
+    playAudio("https://1.mp3-download.best/stream/-hYEGvH:hmTgP");
   }, []);
 
   console.log("MusicPlayer render");
 
   return (
     <>
-      <div className="flex mb-8">
+      <div className="flex mb-4">
         <Link
           to="/"
           className="hover:bg-gray-700 p-2 rounded-full inline-flex items-center">
@@ -39,13 +46,27 @@ export const NowPlaying: FC<{}> = () => {
         </button>
       </div>
 
-      <div className="flex items-center justify-center flex-col mb-8">
-        <img
-          src="https://dummyimage.com/600x600"
-          alt="Cover"
-          className="object-cover bg-center h-40 w-40 rounded-full mb-8 shadow-lg"
-        />
-        <h1 className="text-xl font-bold text-teal-500">
+      <div className="flex items-center justify-center flex-col mb-8 pl-12 pr-12">
+        <CircularProgressbarWithChildren
+          className="w-full h-full"
+          value={(currentAudioTime * 100) / totalAudioDuration}
+          strokeWidth={4}
+          styles={buildStyles({
+            pathColor: "#38b2ac",
+            trailColor: "#4a5568",
+            pathTransitionDuration: 0.1,
+            strokeLinecap: 'round'
+          })}>
+          <img
+            src="https://pbs.twimg.com/profile_images/1059529111725576192/wld30wi5.jpg"
+            alt="Cover"
+            className="object-cover bg-center p-4 rounded-full shadow-lg"
+          />
+        </CircularProgressbarWithChildren>
+      </div>
+
+      <div className="flex items-center justify-center flex-col mb-8 pl-12 pr-12">
+        <h1 className="text-xl text-center font-bold text-teal-500">
           Dummy song about something
         </h1>
         <h2 className="text-sm mb-4">Album of the dummy</h2>
@@ -60,7 +81,7 @@ export const NowPlaying: FC<{}> = () => {
           <SkipBack className="fill-current" />
         </button>
         <button className="bg-teal-500 hover:bg-teal-300 h-auto p-4 rounded-full inline-flex items-center shadow-lg">
-          {isPaused ? (
+          {isAudioPaused ? (
             <Play size={36} className="text-gray-800 fill-current" />
           ) : (
             <Pause size={36} className="text-gray-800 fill-current" />
