@@ -18,18 +18,26 @@ import ReactSlider from "react-slider";
 import { AudioContext } from "../contexts/AudioContext";
 
 export const NowPlaying: FC<{}> = () => {
-  const {
-    playAudio,
-    isAudioPaused,
-    currentAudioTime,
-    totalAudioDuration
-  } = useContext(AudioContext);
-
-  const [volume, setVolume] = useState<number>(0);
+  const { setAudioSource, audioState, audioControls } = useContext(
+    AudioContext
+  );
 
   useEffect(() => {
-    playAudio("https://1.mp3-download.best/stream/-hYEGvH:hmTgP");
+    setAudioSource("https://1.mp3-download.best/stream/-hYEGvH:hmTgP");
+    audioControls.play();
   }, []);
+
+  const togglePlayState = () => {
+    if (audioState.paused) {
+      audioControls.play();
+    } else {
+      audioControls.pause();
+    }
+  };
+
+  const setVolume = (volume: number) => {
+    audioControls.volume(volume);
+  };
 
   console.log("MusicPlayer render");
 
@@ -49,13 +57,13 @@ export const NowPlaying: FC<{}> = () => {
       <div className="flex items-center justify-center flex-col mb-8 pl-12 pr-12">
         <CircularProgressbarWithChildren
           className="w-full h-full"
-          value={(currentAudioTime * 100) / totalAudioDuration}
+          value={(audioState.time * 100) / audioState.duration}
           strokeWidth={4}
           styles={buildStyles({
             pathColor: "#38b2ac",
             trailColor: "#4a5568",
             pathTransitionDuration: 0.1,
-            strokeLinecap: 'round'
+            strokeLinecap: "round"
           })}>
           <img
             src="https://pbs.twimg.com/profile_images/1059529111725576192/wld30wi5.jpg"
@@ -80,8 +88,10 @@ export const NowPlaying: FC<{}> = () => {
         <button className="hover:bg-gray-700 p-4 rounded-full inline-flex items-center">
           <SkipBack className="fill-current" />
         </button>
-        <button className="bg-teal-500 hover:bg-teal-300 h-auto p-4 rounded-full inline-flex items-center shadow-lg">
-          {isAudioPaused ? (
+        <button
+          className="bg-teal-500 hover:bg-teal-300 h-auto p-4 rounded-full inline-flex items-center shadow-lg"
+          onClick={togglePlayState}>
+          {audioState.paused ? (
             <Play size={36} className="text-gray-800 fill-current" />
           ) : (
             <Pause size={36} className="text-gray-800 fill-current" />
@@ -98,11 +108,11 @@ export const NowPlaying: FC<{}> = () => {
       <div className="flex mb-8 ml-4 mr-4">
         <ReactSlider
           min={0}
-          max={100}
-          step={1}
+          max={1}
+          step={0.01}
           className="bg-gray-700 h-2 w-full rounded-full"
           thumbClassName="bg-teal-500 hover:bg-teal-300 rounded-full -mt-1 h-4 w-4 cursor-grab shadow-lg"
-          value={volume}
+          value={audioState.volume}
           onChange={value => setVolume(value as number)}
           renderTrack={(props: { [key: string]: any }, state) => (
             <div
