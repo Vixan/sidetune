@@ -11,10 +11,9 @@ export const App: FC<{}> = () => {
     <>
       <Router>
         <div
-          className="h-screen bg-gradient-to-r from-teal-400 to-blue-700 
-    flex justify-center content-center flex-wrap">
+          className="flex flex-wrap content-center justify-center h-screen bg-gradient-to-r from-teal-400 to-blue-700">
           <div
-            className="h-full bg-gray-800 rounded-xl text-white p-4 shadow-2xl"
+            className="h-full p-4 overflow-hidden text-white bg-gray-800 shadow-2xl rounded-xl"
             style={{ width: 375, maxHeight: 650 }}>
             <Switch>
               <Route exact path="/">

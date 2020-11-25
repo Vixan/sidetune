@@ -21,7 +21,7 @@ export const AudioContext = createContext<AudioContextProps>({
     muted: false,
     paused: false,
     time: 0,
-    volume: 0
+    volume: 0.5
   },
   audioControls: {
     mute: () => {},
