@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fseehawer/react-circular-slider": "^2.3.5",
     "@fullhuman/postcss-purgecss": "^3.0.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -12,7 +13,6 @@
     "postcss": "^8.1.7",
     "postcss-cli": "^8.2.0",
     "react": "^17.0.1",
-    "react-circular-progressbar": "^2.0.3",
     "react-dom": "^17.0.1",
     "react-feather": "^2.0.8",
     "react-router-dom": "^5.2.0",

@@ -1,9 +1,5 @@
 import React, { FC, useContext, useEffect, useState } from "react";
 import {
-  buildStyles,
-  CircularProgressbarWithChildren
-} from "react-circular-progressbar";
-import {
   ChevronLeft,
   Heart,
   Pause,
@@ -18,6 +14,7 @@ import {
 import { Link } from "react-router-dom";
 import ReactSlider from "react-slider";
 import { AudioContext } from "../contexts/AudioContext";
+import CircularSlider from "@fseehawer/react-circular-slider";
 
 const formatSecondsToHms = (seconds: number) => {
   const format = (val: number) => `0${Math.floor(val)}`.slice(-2);
@@ -35,8 +32,9 @@ export const NowPlaying: FC<{}> = () => {
   useEffect(() => {
     setTransitioning(true);
 
-    setAudioSource("https://1.mp3-download.best/stream/-hYEGvH:hmTgP");
-    audioControls.play();
+    setAudioSource("https://1.mp3-download.best/stream/-hhg1uH:RKTbR");
+    audioControls.seek(0);
+    // audioControls.play();
   }, []);
 
   const togglePlayState = () => {
@@ -50,8 +48,6 @@ export const NowPlaying: FC<{}> = () => {
   const setVolume = (volume: number) => {
     audioControls.volume(volume);
   };
-
-  console.log("MusicPlayer render");
 
   return (
     <div
@@ -74,22 +70,32 @@ export const NowPlaying: FC<{}> = () => {
       </div>
 
       <div className="flex flex-col items-center justify-center pl-12 pr-12 mb-4">
-        <CircularProgressbarWithChildren
-          className="w-full h-full"
-          value={(audioState.time * 100) / audioState.duration}
-          strokeWidth={4}
-          styles={buildStyles({
-            pathColor: "#38b2ac",
-            trailColor: "#4a5568",
-            pathTransitionDuration: 0.1,
-            strokeLinecap: "round"
-          })}>
-          <img
-            src="https://pbs.twimg.com/profile_images/1059529111725576192/wld30wi5.jpg"
-            alt="Cover"
-            className="object-cover p-4 bg-center rounded-full shadow-lg"
-          />
-        </CircularProgressbarWithChildren>
+        {audioState.duration && (
+          <CircularSlider
+            min={0}
+            max={audioState.duration}
+            dataIndex={audioState.time}
+            className="w-full h-full"
+            width="250"
+            progressColorFrom="#00bfbd"
+            progressColorTo="#009c9a"
+            knobColor="#38b2ac"
+            knobSize="24"
+            trackColor="#4a5568"
+            renderLabelValue={
+              <img
+                src="https://pbs.twimg.com/profile_images/1059529111725576192/wld30wi5.jpg"
+                alt="Cover"
+                className="absolute top-0 object-cover p-5 bg-center rounded-full shadow-lg"
+              />
+            }
+            onChange={(value: number) => {
+              // FIXME: Investigate how to fix the stuttering issue
+              // audioControls.seek(value);
+            }}>
+            <></>
+          </CircularSlider>
+        )}
       </div>
 
       <div className="flex flex-col items-center justify-center pl-12 pr-12 mb-8">
@@ -149,7 +155,9 @@ export const NowPlaying: FC<{}> = () => {
               <div
                 {...props}
                 className={`rounded-full shadow-sm mt-0 mb-0 h-2 transition-all duration-200 ${
-                  state.index === 1 ? "bg-transparent" : "bg-teal-500 hover:bg-teal-300"
+                  state.index === 1
+                    ? "bg-transparent"
+                    : "bg-teal-500 hover:bg-teal-300"
                 }`}></div>
             )}
           />

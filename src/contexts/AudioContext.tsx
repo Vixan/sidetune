@@ -39,7 +39,7 @@ export const AudioProvider: FC = ({ children }: PropsWithChildren<{}>) => {
   );
   const [audio, state, controls] = useAudio({
     src: currentAudioSource,
-    autoPlay: true
+    autoPlay: false
   });
 
   return (
