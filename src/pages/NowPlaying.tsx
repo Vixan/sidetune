@@ -12,11 +12,11 @@ import {
   Volume2
 } from "react-feather";
 import { Link } from "react-router-dom";
-import ReactSlider from "react-slider";
 import { AudioContext } from "../contexts/AudioContext";
 import CircularSlider from "@fseehawer/react-circular-slider";
 import { formatSecondsToHms } from "../utils/formatting";
 import { AudioPlayerButton } from "../components/AudioPlayerButton";
+import { AudioPlayerVolumeSlider } from "../components/AudioPlayerVolumeSlider";
 
 export const NowPlaying: FC<{}> = () => {
   const { setAudioSource, audioState, audioControls } = useContext(
@@ -44,6 +44,14 @@ export const NowPlaying: FC<{}> = () => {
     audioControls.volume(volume);
   };
 
+  const increaseVolume = () => {
+    setVolume(audioState.volume + 0.1);
+  };
+
+  const decreaseVolume = () => {
+    setVolume(audioState.volume - 0.1);
+  };
+
   return (
     <div
       className={`transition-all duration-500
@@ -59,7 +67,10 @@ export const NowPlaying: FC<{}> = () => {
           className="inline-flex items-center p-2 rounded-full hover:bg-gray-700">
           <ChevronLeft />
         </Link>
-        <AudioPlayerButton icon={<Heart />} className="ml-auto" />
+        <AudioPlayerButton
+          icon={<Heart />}
+          className="p-2 ml-auto hover:bg-gray-700"
+        />
       </div>
 
       <div className="flex flex-col items-center justify-center pl-12 pr-12 mb-4">
@@ -108,7 +119,7 @@ export const NowPlaying: FC<{}> = () => {
         />
         <AudioPlayerButton
           icon={<SkipBack className="fill-current" />}
-          className="p-4 bg-gray-800 hover:bg-gray-700"
+          className="p-4 hover:bg-gray-700"
         />
         <AudioPlayerButton
           icon={
@@ -134,31 +145,19 @@ export const NowPlaying: FC<{}> = () => {
       <div className="flex items-center space-x-2">
         <AudioPlayerButton
           icon={<Volume1 />}
-          onClick={() => setVolume(audioState.volume - 0.1)}
+          onClick={decreaseVolume}
+          className="p-2 hover:bg-gray-700"
         />
         <div className="flex-grow h-2">
-          <ReactSlider
-            min={0}
-            max={1}
-            step={0.01}
-            className="w-full h-2 align-middle bg-gray-700 rounded-full"
-            thumbClassName="bg-teal-500 hover:bg-teal-300 rounded-full -mt-1 h-4 w-4 cursor-grab shadow-lg transition-all duration-200"
+          <AudioPlayerVolumeSlider
             value={audioState.volume}
-            onChange={value => setVolume(value as number)}
-            renderTrack={(props: { [key: string]: any }, state) => (
-              <div
-                {...props}
-                className={`rounded-full shadow-sm mt-0 mb-0 h-2 transition-all duration-200 ${
-                  state.index === 1
-                    ? "bg-transparent"
-                    : "bg-teal-500 hover:bg-teal-300"
-                }`}></div>
-            )}
+            onChange={setVolume}
           />
         </div>
         <AudioPlayerButton
           icon={<Volume2 />}
-          onClick={() => setVolume(audioState.volume + 0.1)}
+          onClick={increaseVolume}
+          className="p-2 hover:bg-gray-700"
         />
       </div>
     </div>

@@ -1,11 +1,9 @@
 import React, { ButtonHTMLAttributes, FC } from "react";
 import classNames from "classnames";
 
-export interface AudioPlayerButtonProps
+interface AudioPlayerButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon: JSX.Element;
-  padding?: number;
-  backgroundColor?: string;
 }
 
 export const AudioPlayerButton: FC<AudioPlayerButtonProps> = ({
@@ -17,13 +15,13 @@ export const AudioPlayerButton: FC<AudioPlayerButtonProps> = ({
     <button
       {...props}
       className={classNames(
-        className,
         "inline-flex",
         "items-center",
         "disabled:bg-transparent",
         "disabled:opacity-25",
         "disabled:cursor-not-allowed",
-        "rounded-full"
+        "rounded-full",
+        className
       )}>
       {icon}
     </button>
