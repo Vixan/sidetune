@@ -5,12 +5,12 @@ interface KeyValuePair<T> {
   [key: string]: T;
 }
 
-interface AudioPlayerVolumeSliderProps {
+interface Props {
   value: number;
   onChange: (value: number) => void;
 }
 
-export const AudioPlayerVolumeSlider: FC<AudioPlayerVolumeSliderProps> = ({
+export const AudioPlayerVolumeSlider: FC<Props> = ({
   value,
   onChange
 }) => {

@@ -13,10 +13,10 @@ import {
 } from "react-feather";
 import { Link } from "react-router-dom";
 import { AudioContext } from "../contexts/AudioContext";
-import CircularSlider from "@fseehawer/react-circular-slider";
 import { formatSecondsToHms } from "../utils/formatting";
 import { AudioPlayerButton } from "../components/AudioPlayerButton";
 import { AudioPlayerVolumeSlider } from "../components/AudioPlayerVolumeSlider";
+import { AudioPlayerSeekSlider } from "../components/AudioPlayerSeekSlider";
 
 export const NowPlaying: FC<{}> = () => {
   const { setAudioSource, audioState, audioControls } = useContext(
@@ -75,30 +75,14 @@ export const NowPlaying: FC<{}> = () => {
 
       <div className="flex flex-col items-center justify-center pl-12 pr-12 mb-4">
         {audioState.duration && (
-          <CircularSlider
-            min={0}
-            max={audioState.duration}
-            dataIndex={audioState.time}
-            className="w-full h-full"
-            width="250"
-            progressColorFrom="#00bfbd"
-            progressColorTo="#009c9a"
-            knobColor="#38b2ac"
-            knobSize="24"
-            trackColor="#4a5568"
-            renderLabelValue={
-              <img
-                src="https://pbs.twimg.com/profile_images/1059529111725576192/wld30wi5.jpg"
-                alt="Cover"
-                className="absolute top-0 object-cover p-5 bg-center rounded-full shadow-lg"
-              />
+          <AudioPlayerSeekSlider
+            audioControls={audioControls}
+            currentTime={audioState.time}
+            duration={audioState.duration}
+            coverImageUrl={
+              "https://pbs.twimg.com/profile_images/1059529111725576192/wld30wi5.jpg"
             }
-            onChange={(value: number) => {
-              // FIXME: Investigate how to fix the stuttering issue
-              // audioControls.seek(value);
-            }}>
-            <></>
-          </CircularSlider>
+          />
         )}
       </div>
 

@@ -1,12 +1,12 @@
 import React, { ButtonHTMLAttributes, FC } from "react";
 import classNames from "classnames";
 
-interface AudioPlayerButtonProps
+interface Props
   extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon: JSX.Element;
 }
 
-export const AudioPlayerButton: FC<AudioPlayerButtonProps> = ({
+export const AudioPlayerButton: FC<Props> = ({
   icon,
   className,
   ...props
