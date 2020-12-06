@@ -1,5 +1,3 @@
-const plugin = require("tailwindcss/plugin");
-
 // TODO: Must include custom fonts in src/fonts and specify them here
 const defaultFonts = [
   "Open Sans",

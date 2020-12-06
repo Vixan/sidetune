@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
   ChevronLeft,
   Heart,
@@ -12,22 +12,20 @@ import {
   Volume2
 } from "react-feather";
 import { Link } from "react-router-dom";
-import { AudioContext } from "../contexts/AudioContext";
 import { formatSecondsToHms } from "../utils/formatting";
 import { AudioPlayerButton } from "../components/AudioPlayerButton";
 import { AudioPlayerVolumeSlider } from "../components/AudioPlayerVolumeSlider";
 import { AudioPlayerSeekSlider } from "../components/AudioPlayerSeekSlider";
+import { useAudioContext } from "../contexts/AudioContext";
 
 export const NowPlaying: FC<{}> = () => {
-  const { setAudioSource, audioState, audioControls } = useContext(
-    AudioContext
-  );
+  const { setAudioSource, audioState, audioControls } = useAudioContext();
   const [isTransitioning, setTransitioning] = useState(false);
 
   useEffect(() => {
     setTransitioning(true);
 
-    setAudioSource("https://1.mp3-download.best/stream/-hhg1uH:RKTbR");
+    setAudioSource("https://1.mp3-download.best/stream/-hYEGvH:hmTgP");
     audioControls.seek(0);
     // audioControls.play();
   }, []);

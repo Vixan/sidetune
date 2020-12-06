@@ -5,15 +5,13 @@ import { NowPlaying } from "./NowPlaying";
 import { AudioProvider } from "../contexts/AudioContext";
 
 export const App: FC<{}> = () => {
-  console.log("App render");
-
   return (
     <>
       <Router>
         <div
           className="flex flex-wrap content-center justify-center h-screen bg-gradient-to-r from-teal-400 to-blue-700">
           <div
-            className="h-full p-4 overflow-hidden text-white bg-gray-800 shadow-2xl rounded-xl"
+            className="h-full p-6 overflow-hidden text-white bg-gray-800 shadow-2xl rounded-xl"
             style={{ width: 375, maxHeight: 650 }}>
             <Switch>
               <Route exact path="/">

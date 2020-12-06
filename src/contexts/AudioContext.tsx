@@ -1,4 +1,10 @@
-import React, { createContext, FC, PropsWithChildren, useState } from "react";
+import React, {
+  createContext,
+  FC,
+  PropsWithChildren,
+  useContext,
+  useState
+} from "react";
 import { useAudio } from "react-use";
 import {
   HTMLMediaControls,
@@ -14,7 +20,7 @@ export interface AudioContextProps {
 
 export const AudioContext = createContext<AudioContextProps>({
   currentAudioSource: "",
-  setAudioSource: (src: string) => {},
+  setAudioSource: (_: string) => {},
   audioState: {
     buffered: [],
     duration: 0,
@@ -55,3 +61,5 @@ export const AudioProvider: FC = ({ children }: PropsWithChildren<{}>) => {
     </AudioContext.Provider>
   );
 };
+
+export const useAudioContext = () => useContext(AudioContext);
