@@ -1,3 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* The emerging W3C standard
+   that is currently Firefox-only */
+   * {
+  scrollbar-width: thin;
+  scrollbar-color: blue orange;
+}
+
+/* Works on Chrome/Edge/Safari */
+*::-webkit-scrollbar {
+  @apply w-2;
+}
+
+*::-webkit-scrollbar-track {
+  @apply bg-transparent m-2;
+}
+
+*::-webkit-scrollbar-thumb {
+  @apply bg-gray-700 rounded-3xl;
+}
+*::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-600;
+}

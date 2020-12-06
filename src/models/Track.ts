@@ -1,6 +1,6 @@
 import { Artist } from "./Artist";
 
-export interface Song {
+export interface Track {
   id: number;
   title: string;
   duration: number;

@@ -20,6 +20,7 @@
     "react-elastic-carousel": "^0.9.5",
     "react-feather": "^2.0.8",
     "react-query": "^2.26.3",
+    "react-query-devtools": "^2.6.3",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.0",
     "react-slider": "^1.1.2",

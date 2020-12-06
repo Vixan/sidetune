@@ -29,9 +29,9 @@ export const CarouselTopAlbum: FC<Props> = ({ album }) => {
 
 export const CarouselTopAlbumSkeleton: FC<{}> = () => {
   return (
-    <div className="flex-row w-1/3 mr-4 space-y-3">
+    <div className="flex flex-col w-1/3 mr-4 space-y-3">
       <div className="w-full h-24 bg-gray-600 rounded-lg"></div>
-      <div className="w-full space-y-2 overflow-hidden whitespace-no-wrap">
+      <div className="w-full space-y-2">
         <div className="h-4 bg-gray-600 rounded"></div>
         <div className="w-3/4 h-4 bg-gray-600 rounded"></div>
       </div>

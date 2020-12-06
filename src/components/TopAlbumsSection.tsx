@@ -7,7 +7,7 @@ import { PagedResponse } from "../api/apiResponse";
 import { TopAlbum } from "../models/TopAlbum";
 import { CarouselTopAlbum, CarouselTopAlbumSkeleton } from "./CarouselTopAlbum";
 
-export const TopAlbumsSkeleton = () => (
+const Skeleton = () => (
   <div className="flex w-full text-xs text-left animate-pulse">
     <CarouselTopAlbumSkeleton />
     <CarouselTopAlbumSkeleton />
@@ -18,14 +18,7 @@ export const TopAlbumsSkeleton = () => (
 export const TopAlbumsSection: FC<{}> = () => {
   const { data: albumsPage, isLoading, isError } = useQuery<
     PagedResponse<TopAlbum[]>
-  >(
-    "topAlbums",
-    getTopAlbums
-    // () =>
-    //   fetch("https://jsonplaceholder.typicode.com/todos/1").then(f => f.json())
-  );
-
-  console.log(albumsPage?.data);
+  >("topAlbums", getTopAlbums);
 
   return (
     <>
@@ -38,7 +31,7 @@ export const TopAlbumsSection: FC<{}> = () => {
             View all
           </Link>
         </div>
-        {isLoading && <TopAlbumsSkeleton />}
+        {isLoading && <Skeleton />}
         {isError && (
           <div className="flex w-full text-center align-middle">
             <h1 className="text-red-600">

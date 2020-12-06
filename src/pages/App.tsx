@@ -4,31 +4,47 @@ import { Home } from "./Home";
 import { NowPlaying } from "./NowPlaying";
 import { AudioProvider } from "../contexts/AudioContext";
 import { AlbumPlaylist } from "./AlbumPlaylist";
+import { ReactQueryDevtools } from "react-query-devtools";
+import { ReactQueryCacheProvider, QueryCache } from "react-query";
+
+const queryCache = new QueryCache({
+  defaultConfig: {
+    queries: {
+      refetchOnWindowFocus: false,
+      // INFO: Use cached data for 10 mins for all queries until it will be considered "old" and re-fetched
+      staleTime: 600000
+    }
+  }
+});
 
 export const App: FC<{}> = () => {
   return (
     <>
-      <Router>
-        <div className="flex flex-wrap content-center justify-center h-screen bg-gradient-to-r from-teal-400 to-blue-700">
-          <div
-            className="h-full p-6 overflow-hidden text-white bg-gray-800 shadow-2xl rounded-xl"
-            style={{ width: 375, maxHeight: 650 }}>
-            <Switch>
-              <Route exact path="/">
-                <Home />
-              </Route>
-              <Route path="/play">
-                <AudioProvider>
-                  <NowPlaying />
-                </AudioProvider>
-              </Route>
-              <Route path="/album/:id">
-                <AlbumPlaylist />
-              </Route>
-            </Switch>
+      <ReactQueryCacheProvider queryCache={queryCache}>
+        <Router>
+          <div className="flex flex-wrap content-center justify-center h-screen scrolling-auto bg-gradient-to-r from-teal-400 to-blue-700">
+            <div
+              className="h-full p-6 overflow-y-auto text-white bg-gray-800 shadow-2xl rounded-xl"
+              style={{ width: 375, maxHeight: 650 }}>
+              <Switch>
+                <Route exact path="/">
+                  <Home />
+                </Route>
+                <Route path="/play">
+                  <AudioProvider>
+                    <NowPlaying />
+                  </AudioProvider>
+                </Route>
+                <Route path="/album/:id">
+                  <AlbumPlaylist />
+                </Route>
+              </Switch>
+            </div>
           </div>
-        </div>
-      </Router>
+        </Router>
+      </ReactQueryCacheProvider>
+
+      <ReactQueryDevtools />
     </>
   );
 };
