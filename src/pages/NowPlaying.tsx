@@ -13,10 +13,10 @@ import {
 } from "react-feather";
 import { Link } from "react-router-dom";
 import { formatSecondsToHms } from "../utils/formatting";
-import { AudioPlayerButton } from "../components/AudioPlayerButton";
 import { AudioPlayerVolumeSlider } from "../components/AudioPlayerVolumeSlider";
 import { AudioPlayerSeekSlider } from "../components/AudioPlayerSeekSlider";
 import { useAudioContext } from "../contexts/AudioContext";
+import { IconButton } from "../components/IconButton";
 
 export const NowPlaying: FC<{}> = () => {
   const { setAudioSource, audioState, audioControls } = useAudioContext();
@@ -65,7 +65,7 @@ export const NowPlaying: FC<{}> = () => {
           className="inline-flex items-center p-2 rounded-full hover:bg-gray-700">
           <ChevronLeft />
         </Link>
-        <AudioPlayerButton
+        <IconButton
           icon={<Heart />}
           className="p-2 ml-auto hover:bg-gray-700"
         />
@@ -95,15 +95,15 @@ export const NowPlaying: FC<{}> = () => {
       </div>
 
       <div className="flex items-center justify-center mb-8 ml-4 mr-4 space-x-2">
-        <AudioPlayerButton
+        <IconButton
           icon={<Shuffle size={16} className="fill-current" />}
           disabled
         />
-        <AudioPlayerButton
+        <IconButton
           icon={<SkipBack className="fill-current" />}
           className="p-4 hover:bg-gray-700"
         />
-        <AudioPlayerButton
+        <IconButton
           icon={
             audioState.paused ? (
               <Play size={36} className="text-gray-800 fill-current" />
@@ -114,18 +114,18 @@ export const NowPlaying: FC<{}> = () => {
           className="p-4 bg-teal-500 shadow-lg hover:bg-teal-300"
           onClick={togglePlayState}
         />
-        <AudioPlayerButton
+        <IconButton
           icon={<SkipForward className="fill-current" />}
           className="p-4 bg-gray-800 hover:bg-gray-700"
         />
-        <AudioPlayerButton
+        <IconButton
           icon={<Repeat size={16} className="fill-current" />}
           disabled
         />
       </div>
 
       <div className="flex items-center space-x-2">
-        <AudioPlayerButton
+        <IconButton
           icon={<Volume1 />}
           onClick={decreaseVolume}
           className="p-2 hover:bg-gray-700"
@@ -136,7 +136,7 @@ export const NowPlaying: FC<{}> = () => {
             onChange={setVolume}
           />
         </div>
-        <AudioPlayerButton
+        <IconButton
           icon={<Volume2 />}
           onClick={increaseVolume}
           className="p-2 hover:bg-gray-700"

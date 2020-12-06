@@ -1,13 +1,21 @@
 import React, { FC } from "react";
-import { Link } from "react-router-dom";
+import { QueryCache, ReactQueryCacheProvider } from "react-query";
 import { TopAlbumsSection } from "../components/TopAlbumsSection";
+
+const queryCache = new QueryCache({
+  defaultConfig: {
+    queries: {
+      refetchOnWindowFocus: false
+    }
+  }
+});
 
 export const Home: FC<{}> = () => {
   return (
     <>
-      {/* <Link to="/play">Open player</Link> */}
-
-      <TopAlbumsSection />
+      <ReactQueryCacheProvider queryCache={queryCache}>
+        <TopAlbumsSection />
+      </ReactQueryCacheProvider>
     </>
   );
 };

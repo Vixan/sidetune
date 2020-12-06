@@ -6,7 +6,7 @@ interface Props
   icon: JSX.Element;
 }
 
-export const AudioPlayerButton: FC<Props> = ({
+export const IconButton: FC<Props> = ({
   icon,
   className,
   ...props

@@ -3,20 +3,27 @@ import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { getTopAlbums } from "../api/albumsApiService";
 import Carousel from "react-elastic-carousel";
+import { PagedResponse } from "../api/apiResponse";
+import { TopAlbum } from "../models/TopAlbum";
+import { CarouselTopAlbum, CarouselTopAlbumSkeleton } from "./CarouselTopAlbum";
+
+export const TopAlbumsSkeleton = () => (
+  <div className="flex w-full text-xs text-left animate-pulse">
+    <CarouselTopAlbumSkeleton />
+    <CarouselTopAlbumSkeleton />
+    <CarouselTopAlbumSkeleton />
+  </div>
+);
 
 export const TopAlbumsSection: FC<{}> = () => {
-  const { data: albumsPage, isLoading, isError } = useQuery(
+  const { data: albumsPage, isLoading, isError } = useQuery<
+    PagedResponse<TopAlbum[]>
+  >(
     "topAlbums",
     getTopAlbums
+    // () =>
+    //   fetch("https://jsonplaceholder.typicode.com/todos/1").then(f => f.json())
   );
-
-  if (isLoading) {
-    return <h2>Loading albums</h2>;
-  }
-
-  if (isError) {
-    return <h2>Error fetching albums</h2>;
-  }
 
   console.log(albumsPage?.data);
 
@@ -31,33 +38,26 @@ export const TopAlbumsSection: FC<{}> = () => {
             View all
           </Link>
         </div>
-        <Carousel
-          itemsToShow={3}
-          showArrows={false}
-          pagination={false}
-          preventDefaultTouchmoveEvent={true}>
-          {albumsPage?.data.map(album => (
-            <div
-              className="w-full text-xs text-left outline-none"
-              key={album.id}>
-              <Link to="/play">
-                <div className="flex-row mr-4 space-y-3">
-                  <img
-                    src={album.cover_medium}
-                    alt={`${album.title} cover`}
-                    className="object-cover object-center w-full h-24 rounded-lg pointer-events-none"
-                  />
-                  <div className="w-full space-y-1 overflow-hidden text-white whitespace-no-wrap">
-                    <p className="truncate">{album.title}</p>
-                    <p className="text-gray-600 truncate">
-                      {album.artist?.name}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            </div>
-          ))}
-        </Carousel>
+        {isLoading && <TopAlbumsSkeleton />}
+        {isError && (
+          <div className="flex w-full text-center align-middle">
+            <h1 className="text-red-600">
+              An error has occured when fetching top albums
+            </h1>
+          </div>
+        )}
+
+        {albumsPage?.data && (
+          <Carousel
+            itemsToShow={3}
+            showArrows={false}
+            pagination={false}
+            preventDefaultTouchmoveEvent={true}>
+            {albumsPage?.data.map(album => (
+              <CarouselTopAlbum album={album} key={album.id} />
+            ))}
+          </Carousel>
+        )}
       </section>
     </>
   );
