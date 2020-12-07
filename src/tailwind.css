@@ -5,8 +5,8 @@
 /* The emerging W3C standard
    that is currently Firefox-only */
    * {
-  scrollbar-width: thin;
-  scrollbar-color: blue orange;
+  scrollbar-width: 0.25rem;
+  scrollbar-color: #4a5568 #2d3748;
 }
 
 /* Works on Chrome/Edge/Safari */

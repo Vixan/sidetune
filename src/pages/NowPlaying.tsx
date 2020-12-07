@@ -16,7 +16,7 @@ import { formatSecondsToHms } from "../utils/formatting";
 import { AudioPlayerVolumeSlider } from "../components/AudioPlayerVolumeSlider";
 import { AudioPlayerSeekSlider } from "../components/AudioPlayerSeekSlider";
 import { useAudioContext } from "../contexts/AudioContext";
-import { IconButton } from "../components/IconButton";
+import { Button } from "../components/Button";
 
 export const NowPlaying: FC<{}> = () => {
   const { setAudioSource, audioState, audioControls } = useAudioContext();
@@ -65,10 +65,9 @@ export const NowPlaying: FC<{}> = () => {
           className="inline-flex items-center p-2 rounded-full hover:bg-gray-700">
           <ChevronLeft />
         </Link>
-        <IconButton
-          icon={<Heart />}
-          className="p-2 ml-auto hover:bg-gray-700"
-        />
+        <Button className="p-2 ml-auto hover:bg-gray-700">
+          <Heart />
+        </Button>
       </div>
 
       <div className="flex flex-col items-center justify-center pl-12 pr-12 mb-4">
@@ -94,53 +93,43 @@ export const NowPlaying: FC<{}> = () => {
         <p className="text-xs text-gray-600">Coniferous, 2019</p>
       </div>
 
-      <div className="flex items-center justify-center mb-8 ml-4 mr-4 space-x-2">
-        <IconButton
-          icon={<Shuffle size={16} className="fill-current" />}
-          disabled
-        />
-        <IconButton
-          icon={<SkipBack className="fill-current" />}
-          className="p-4 hover:bg-gray-700"
-        />
-        <IconButton
-          icon={
-            audioState.paused ? (
-              <Play size={36} className="text-gray-800 fill-current" />
-            ) : (
-              <Pause size={36} className="text-gray-800 fill-current" />
-            )
-          }
+      <div className="flex items-center justify-center mb-6 ml-4 mr-4 space-x-2">
+        <Button disabled>
+          <Shuffle size={16} className="fill-current" />
+        </Button>
+        <Button className="p-4 hover:bg-gray-700">
+          <SkipBack className="fill-current" />
+        </Button>
+        <Button
           className="p-4 bg-teal-500 shadow-lg hover:bg-teal-300"
-          onClick={togglePlayState}
-        />
-        <IconButton
-          icon={<SkipForward className="fill-current" />}
-          className="p-4 bg-gray-800 hover:bg-gray-700"
-        />
-        <IconButton
-          icon={<Repeat size={16} className="fill-current" />}
-          disabled
-        />
+          onClick={togglePlayState}>
+          {audioState.paused ? (
+            <Play size={36} className="text-gray-800 fill-current" />
+          ) : (
+            <Pause size={36} className="text-gray-800 fill-current" />
+          )}
+        </Button>
+        <Button className="p-4 bg-gray-800 hover:bg-gray-700">
+          <SkipForward className="fill-current" />
+        </Button>
+        <Button disabled>
+          <Repeat size={16} className="fill-current" />
+        </Button>
       </div>
 
       <div className="flex items-center space-x-2">
-        <IconButton
-          icon={<Volume1 />}
-          onClick={decreaseVolume}
-          className="p-2 hover:bg-gray-700"
-        />
+        <Button onClick={decreaseVolume} className="p-2 hover:bg-gray-700">
+          <Volume1 />
+        </Button>
         <div className="flex-grow h-2">
           <AudioPlayerVolumeSlider
             value={audioState.volume}
             onChange={setVolume}
           />
         </div>
-        <IconButton
-          icon={<Volume2 />}
-          onClick={increaseVolume}
-          className="p-2 hover:bg-gray-700"
-        />
+        <Button onClick={increaseVolume} className="p-2 hover:bg-gray-700">
+          <Volume2 />
+        </Button>
       </div>
     </div>
   );

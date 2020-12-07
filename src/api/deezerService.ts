@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const allowCorsProxyUrl = "https://cors-anywhere.herokuapp.com/";
+// INFO: Replace with "https://cors-anywhere.herokuapp.com/" if the below proxy does not work
+const allowCorsProxyUrl = "https://thingproxy.freeboard.io/fetch/";
 const deezerApiUrl = "https://api.deezer.com/";
 
 export const deezerService = axios.create({

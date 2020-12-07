@@ -1,16 +1,9 @@
 import React, { ButtonHTMLAttributes, FC } from "react";
 import classNames from "classnames";
 
-interface Props
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
-  icon: JSX.Element;
-}
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
-export const IconButton: FC<Props> = ({
-  icon,
-  className,
-  ...props
-}) => {
+export const Button: FC<Props> = ({ className, children, ...props }) => {
   return (
     <button
       {...props}
@@ -23,7 +16,7 @@ export const IconButton: FC<Props> = ({
         "rounded-full",
         className
       )}>
-      {icon}
+      {children}
     </button>
   );
 };
