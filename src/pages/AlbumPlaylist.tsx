@@ -118,19 +118,19 @@ export const AlbumPlaylist: FC<{}> = () => {
               <div
                 className="flex flex-row items-center w-full space-x-4 rounded-lg cursor-pointer group"
                 key={track.id}>
-                <div className="flex items-center justify-center">
-                  <div className="absolute flex items-center justify-center w-16 h-16 bg-black rounded-lg opacity-0 group-hover:opacity-75"></div>
+                <div className="flex items-center justify-center flex-none">
+                  <div className="absolute flex items-center justify-center w-16 h-16 bg-black rounded-lg opacity-0 group-hover:opacity-50"></div>
                   <Play
                     size="20"
                     className="absolute opacity-0 fill-current group-hover:opacity-100"
                   />
                   <img
                     src={data.cover_big}
-                    className="flex-none w-16 h-16 rounded-lg"
+                    className="w-16 h-16 rounded-lg"
                     alt={track.title}
                   />
                 </div>
-                <div className="flex-grow h-full max-w-sm overflow-hidden whitespace-no-wrap">
+                <div className="flex-grow h-full overflow-hidden whitespace-no-wrap">
                   <p className="text-sm text-gray-400 truncate group-hover:text-teal-400">
                     {track.title}
                   </p>
