@@ -29,7 +29,10 @@ module.exports = {
   },
   variants: {
     // Extend the existing variants to support the disabled core utility
-    opacity: ({ after }) => after(["disabled"]),
+    // using textColor: ({after}) => after([])
+    // or textColor: ["responsive", "hover", "focus", "group-hover"],
+    opacity: ({ after }) => after(["disabled", "group-hover"]),
+    textColor: ({ after }) => after(["group-hover"]),
     backgroundColor: ({ after }) => after(["disabled"]),
     cursor: ({ after }) => after(["disabled"])
   }

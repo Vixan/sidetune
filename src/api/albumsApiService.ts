@@ -4,27 +4,15 @@ import { deezerService } from "./deezerService";
 import { TopAlbum } from "../models/TopAlbum";
 
 export const getTopAlbums = async (): Promise<PagedResponse<TopAlbum[]>> => {
-  try {
-    const response = await deezerService.get<PagedResponse<TopAlbum[]>>(
-      "/chart/0/albums"
-    );
+  const response = await deezerService.get<PagedResponse<TopAlbum[]>>(
+    "/chart/0/albums"
+  );
 
-    return response.data;
-  } catch (error) {
-    console.log(error);
-  }
-
-  return { data: [] };
+  return response.data;
 };
 
 export const getAlbumPlaylist = async (id: number): Promise<Album | null> => {
-  try {
-    const response = await deezerService.get<Album>(`/album/${id}`);
+  const response = await deezerService.get<Album>(`/album/${id}`);
 
-    return response.data;
-  } catch (error) {
-    console.log(error);
-  }
-
-  return null;
+  return response.data;
 };

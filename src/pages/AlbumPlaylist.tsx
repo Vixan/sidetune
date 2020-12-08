@@ -1,10 +1,20 @@
 import React, { FC, useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, Heart, Play, Plus, Shuffle } from "react-feather";
+import {
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+  Heart,
+  Play,
+  Plus,
+  Shuffle
+} from "react-feather";
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
 import { getAlbumPlaylist } from "../api/albumsApiService";
 import { Button } from "../components/Button";
+import { UnexpectedErrorMessage } from "../components/UnexpectedErrorMessage";
 import { Album } from "../models/Album";
+import { MAX_CACHE_STALE_TIME } from "../utils/caching";
 import { formatSecondsToHms } from "../utils/formatting";
 
 interface NavigationParams {
@@ -26,11 +36,10 @@ export const AlbumPlaylist: FC<{}> = () => {
   const { id } = useParams<NavigationParams>();
   const [isTransitioning, setTransitioning] = useState(false);
   const { data, isLoading, isError } = useQuery<Album | null>(
-    "albumPlaylist",
+    ["albumPlaylist", id],
     async () => await getAlbumPlaylist(parseInt(id)),
     {
-      // INFO: Use cached data for 10 mins for all queries until it will be considered "old" and re-fetched
-      staleTime: 600000
+      staleTime: MAX_CACHE_STALE_TIME
     }
   );
 
@@ -62,6 +71,10 @@ export const AlbumPlaylist: FC<{}> = () => {
 
       {isLoading && <Skeleton />}
 
+      {isError && (
+        <UnexpectedErrorMessage description="Could not load album playlist" />
+      )}
+
       {data && (
         <div className="flex flex-col space-y-6">
           <section className="flex flex-col items-center space-y-2">
@@ -75,10 +88,10 @@ export const AlbumPlaylist: FC<{}> = () => {
               <span>·</span>
               <span>{new Date(data.release_date).getFullYear()}</span>
             </div>
-            <h1 className="text-lg font-bold text-teal-500">{data.title}</h1>
+            <p className="text-lg font-bold text-teal-500">{data.title}</p>
             <Link
               to="/"
-              className="flex items-center space-x-1 text-sm text-gray-600 hover:text-white">
+              className="flex items-center space-x-2 text-sm text-gray-600 hover:text-white">
               {data.artist.name}
               <ChevronRight size={14} />
             </Link>
@@ -94,24 +107,31 @@ export const AlbumPlaylist: FC<{}> = () => {
               <span className="text-teal-500">Shuffle</span>
             </Button>
             <Button
-              className="justify-center flex-grow pt-2 pb-2 pl-6 pr-6 space-x-1 text-sm border-2 border-gray-700 hover:bg-gray-700"
+              className="justify-center flex-grow pt-2 pb-2 pl-6 pr-6 space-x-1 text-sm text-gray-500 border-2 border-gray-700 hover:bg-gray-700 "
               disabled>
-              <Plus size={18} className="text-gray-500 fill-current" />
-              <span className="text-gray-500">Add</span>
+              <Plus size={18} className="fill-current" />
+              <span>Add</span>
             </Button>
           </section>
           <section className="flex flex-col space-y-2">
             {data.tracks.data.map(track => (
               <div
-                className="flex flex-row items-center w-full space-x-4 hover:bg"
+                className="flex flex-row items-center w-full space-x-4 rounded-lg cursor-pointer group"
                 key={track.id}>
-                <img
-                  src={data.cover_big}
-                  className="flex-none w-16 h-16 rounded-lg"
-                  alt={track.title}
-                />
+                <div className="flex items-center justify-center">
+                  <div className="absolute flex items-center justify-center w-16 h-16 bg-black rounded-lg opacity-0 group-hover:opacity-75"></div>
+                  <Play
+                    size="20"
+                    className="absolute opacity-0 fill-current group-hover:opacity-100"
+                  />
+                  <img
+                    src={data.cover_big}
+                    className="flex-none w-16 h-16 rounded-lg"
+                    alt={track.title}
+                  />
+                </div>
                 <div className="flex-grow h-full max-w-sm overflow-hidden whitespace-no-wrap">
-                  <p className="text-sm text-gray-400 truncate">
+                  <p className="text-sm text-gray-400 truncate group-hover:text-teal-400">
                     {track.title}
                   </p>
                   <span className="text-xs text-gray-600 truncate">

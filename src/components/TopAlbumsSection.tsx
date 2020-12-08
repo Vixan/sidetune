@@ -6,6 +6,8 @@ import Carousel from "react-elastic-carousel";
 import { PagedResponse } from "../api/apiResponse";
 import { TopAlbum } from "../models/TopAlbum";
 import { CarouselTopAlbum, CarouselTopAlbumSkeleton } from "./CarouselTopAlbum";
+import { MAX_CACHE_STALE_TIME } from "../utils/caching";
+import { UnexpectedErrorMessage } from "./UnexpectedErrorMessage";
 
 const Skeleton = () => (
   <div className="flex w-full text-xs text-left animate-pulse">
@@ -18,7 +20,9 @@ const Skeleton = () => (
 export const TopAlbumsSection: FC<{}> = () => {
   const { data: albumsPage, isLoading, isError } = useQuery<
     PagedResponse<TopAlbum[]>
-  >("topAlbums", getTopAlbums);
+  >("topAlbums", getTopAlbums, {
+    staleTime: MAX_CACHE_STALE_TIME
+  });
 
   return (
     <>
@@ -31,13 +35,11 @@ export const TopAlbumsSection: FC<{}> = () => {
             View all
           </Link>
         </div>
+
         {isLoading && <Skeleton />}
+
         {isError && (
-          <div className="flex w-full text-center align-middle">
-            <h1 className="text-red-600">
-              An error has occured when fetching top albums
-            </h1>
-          </div>
+          <UnexpectedErrorMessage description="Could not load top albums" />
         )}
 
         {albumsPage?.data && (

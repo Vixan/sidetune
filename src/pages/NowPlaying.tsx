@@ -88,8 +88,8 @@ export const NowPlaying: FC<{}> = () => {
           {formatSecondsToHms(audioState.time)} /{" "}
           {formatSecondsToHms(audioState.duration)}
         </span>
-        <h1 className="text-xl font-bold text-center text-teal-500">Droplet</h1>
-        <h2 className="mb-2 text-sm">Kupla</h2>
+        <p className="text-xl font-bold text-center text-teal-500">Droplet</p>
+        <p className="mb-2 text-sm">Kupla</p>
         <p className="text-xs text-gray-600">Coniferous, 2019</p>
       </div>
 
