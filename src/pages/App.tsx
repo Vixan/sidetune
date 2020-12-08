@@ -1,5 +1,10 @@
 import React, { FC } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+  Switch
+} from "react-router-dom";
 import { Home } from "./Home";
 import { NowPlaying } from "./NowPlaying";
 import { AudioProvider } from "../contexts/AudioContext";
@@ -27,13 +32,16 @@ export const App: FC<{}> = () => {
               <Route exact path="/">
                 <Home />
               </Route>
-              <Route path="/play">
+              <Route path="/play/:trackId">
                 <AudioProvider>
                   <NowPlaying />
                 </AudioProvider>
               </Route>
-              <Route path="/album/:id">
+              <Route path="/album/:albumId">
                 <AlbumPlaylist />
+              </Route>
+              <Route>
+                <Redirect to="/" />
               </Route>
             </Switch>
           </div>

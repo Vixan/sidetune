@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  FC,
-  PropsWithChildren,
-  useContext,
-  useState
-} from "react";
+import React, { createContext, FC, PropsWithChildren, useContext } from "react";
 import { useAudio } from "react-use";
 import {
   HTMLMediaControls,
@@ -12,7 +6,7 @@ import {
 } from "react-use/lib/util/createHTMLMediaHook";
 
 export interface AudioContextProps {
-  currentAudioSource: string;
+  currentAudioSource?: string;
   setAudioSource: (src: string) => void;
   audioState: HTMLMediaState;
   audioControls: HTMLMediaControls;
@@ -40,19 +34,22 @@ export const AudioContext = createContext<AudioContextProps>({
 });
 
 export const AudioProvider: FC = ({ children }: PropsWithChildren<{}>) => {
-  const [currentAudioSource, setAudioSource] = useState<string>(
-    "https://1.mp3-download.best/stream/-hYEGvH:hmTgP"
-  );
-  const [audio, state, controls] = useAudio({
-    src: currentAudioSource,
+  const [audio, state, controls, ref] = useAudio({
+    src: "",
     autoPlay: false
   });
+
+  const setAudioSource = (url: string) => {
+    if (ref.current) {
+      ref.current.src = url;
+    }
+  };
 
   return (
     <AudioContext.Provider
       value={{
-        currentAudioSource,
-        setAudioSource: src => setAudioSource(src),
+        currentAudioSource: ref.current?.src,
+        setAudioSource,
         audioState: state,
         audioControls: controls
       }}>

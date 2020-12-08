@@ -11,7 +11,7 @@ export const getTopAlbums = async (): Promise<PagedResponse<TopAlbum[]>> => {
   return response.data;
 };
 
-export const getAlbumPlaylist = async (id: number): Promise<Album | null> => {
+export const getAlbumPlaylist = async (id: number): Promise<Album> => {
   const response = await deezerService.get<Album>(`/album/${id}`);
 
   return response.data;

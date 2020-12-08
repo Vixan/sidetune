@@ -1,4 +1,5 @@
 import { Artist } from "./Artist";
+import { Album } from "./Album";
 
 export interface Track {
   id: number;
@@ -7,4 +8,6 @@ export interface Track {
   link: string;
   explicit_lyrics: boolean;
   artist: Artist;
+  album: Album;
+  preview: string;
 }

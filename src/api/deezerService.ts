@@ -4,6 +4,7 @@ import axios from "axios";
 const allowCorsProxyUrl = "https://thingproxy.freeboard.io/fetch/";
 const deezerApiUrl = "https://api.deezer.com/";
 
+// TODO: Replace with SoundCloud or Spotify APIs if they support audio playback / return track URLs
 export const deezerService = axios.create({
   baseURL: `${allowCorsProxyUrl}${deezerApiUrl}`,
   headers: {

@@ -1,6 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
 import {
-  AlertCircle,
   ChevronLeft,
   ChevronRight,
   Heart,
@@ -18,7 +17,7 @@ import { MAX_CACHE_STALE_TIME } from "../utils/caching";
 import { formatSecondsToHms } from "../utils/formatting";
 
 interface NavigationParams {
-  id: string;
+  albumId: string;
 }
 
 const Skeleton = () => (
@@ -33,11 +32,11 @@ const Skeleton = () => (
 );
 
 export const AlbumPlaylist: FC<{}> = () => {
-  const { id } = useParams<NavigationParams>();
+  const { albumId } = useParams<NavigationParams>();
   const [isTransitioning, setTransitioning] = useState(false);
-  const { data, isLoading, isError } = useQuery<Album | null>(
-    ["albumPlaylist", id],
-    async () => await getAlbumPlaylist(parseInt(id)),
+  const { data, isLoading, isError } = useQuery<Album>(
+    ["albumPlaylist", albumId],
+    async () => await getAlbumPlaylist(parseInt(albumId)),
     {
       staleTime: MAX_CACHE_STALE_TIME
     }
@@ -115,7 +114,8 @@ export const AlbumPlaylist: FC<{}> = () => {
           </section>
           <section className="flex flex-col space-y-2">
             {data.tracks.data.map(track => (
-              <div
+              <Link
+                to={`/play/${track.id}`}
                 className="flex flex-row items-center w-full space-x-4 rounded-lg cursor-pointer group"
                 key={track.id}>
                 <div className="flex items-center justify-center flex-none">
@@ -141,7 +141,7 @@ export const AlbumPlaylist: FC<{}> = () => {
                 <span className="flex-none text-xs text-gray-600">
                   {formatSecondsToHms(track.duration)}
                 </span>
-              </div>
+              </Link>
             ))}
           </section>
         </div>
