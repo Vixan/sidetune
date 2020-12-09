@@ -1,6 +1,6 @@
 import { Album } from "../models/Album";
 import { PagedResponse } from "./apiResponse";
-import { deezerService } from "./deezerService";
+import { deezerService } from "./apiService";
 import { TopAlbum } from "../models/TopAlbum";
 
 export const getTopAlbums = async (): Promise<PagedResponse<TopAlbum[]>> => {

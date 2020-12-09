@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState, useRef } from "react";
 import {
   ChevronLeft,
   Heart,
@@ -9,7 +9,9 @@ import {
   SkipBack,
   SkipForward,
   Volume1,
-  Volume2
+  Volume2,
+  AlignLeft,
+  Meh
 } from "react-feather";
 import { useQuery } from "react-query";
 import { useHistory, useParams } from "react-router-dom";
@@ -21,10 +23,26 @@ import { useAudioContext } from "../contexts/AudioContext";
 import { Track } from "../models/Track";
 import { MAX_CACHE_STALE_TIME } from "../utils/caching";
 import { formatSecondsToHms } from "../utils/formatting";
+import { getLyrics } from "../api/lyricsApiService";
+import { useClickAway } from "react-use";
+import { UnexpectedErrorMessage } from "../components/UnexpectedErrorMessage";
 
 interface NavigationParams {
   trackId: string;
 }
+
+const Skeleton = () => (
+  <div className="flex flex-col items-center justify-center mb-4 space-y-8 animate-pulse">
+    <div className="w-48 h-48 bg-gray-600 rounded-lg"></div>
+    <div className="flex flex-col items-center w-full space-y-4">
+      <div className="w-2/4 h-4 bg-gray-600 rounded"></div>
+      <div className="w-3/4 h-4 bg-gray-600 rounded"></div>
+      <div className="w-2/4 h-4 bg-gray-600 rounded"></div>
+      <div className="w-3/4 h-4 bg-gray-600 rounded"></div>
+    </div>
+    <div className="w-full h-10 bg-gray-600 rounded"></div>
+  </div>
+);
 
 export const NowPlaying: FC<{}> = () => {
   const { trackId } = useParams<NavigationParams>();
@@ -32,6 +50,12 @@ export const NowPlaying: FC<{}> = () => {
 
   const { setAudioSource, audioState, audioControls } = useAudioContext();
   const [isTransitioning, setTransitioning] = useState(false);
+  const [isLyricsPaneOpened, setLyricsPaneOpened] = useState(false);
+
+  const ref = useRef(null);
+  useClickAway(ref, () => {
+    setLyricsPaneOpened(false);
+  });
 
   const playTrack = (data: Track) => {
     setAudioSource(data.preview);
@@ -39,12 +63,21 @@ export const NowPlaying: FC<{}> = () => {
     audioControls.play();
   };
 
-  const { data, isLoading } = useQuery<Track>(
+  const { data, isLoading, isError, error } = useQuery<Track>(
     ["track", trackId],
     async () => getTrack(parseInt(trackId)),
     {
       staleTime: MAX_CACHE_STALE_TIME,
       onSuccess: playTrack
+    }
+  );
+
+  const { data: lyrics } = useQuery<string>(
+    ["lyrics", trackId],
+    async () => getLyrics(data?.artist.name || "", data?.title || ""),
+    {
+      enabled: data,
+      staleTime: 2 * MAX_CACHE_STALE_TIME
     }
   );
 
@@ -78,7 +111,7 @@ export const NowPlaying: FC<{}> = () => {
       ${
         isTransitioning
           ? "ease-in-out transform translate-x-0 opacity-100"
-          : "transform translate-x-32 opacity-0"
+          : "transform translate-x-32 opacity-0 h-full"
       }
     `}>
       <div className="flex mb-4">
@@ -87,16 +120,42 @@ export const NowPlaying: FC<{}> = () => {
           onClick={() => history.goBack()}>
           <ChevronLeft />
         </Button>
-        <Button className="p-2 ml-auto hover:bg-gray-700">
-          <Heart />
-        </Button>
+        <div className="ml-auto">
+          <Button className="p-2 hover:bg-gray-700">
+            <AlignLeft onClick={() => setLyricsPaneOpened(true)} />
+          </Button>
+          <Button className="p-2 hover:bg-gray-700">
+            <Heart />
+          </Button>
+        </div>
       </div>
 
-      {isLoading && <>Loading</>}
+      {isLoading && <Skeleton />}
 
-      {data && audioState.time && (
-        <>
-          <div className="flex flex-col items-center justify-center pl-12 pr-12 mb-4">
+      {isError && <UnexpectedErrorMessage description={error as string} />}
+
+      <div
+        ref={ref}
+        className={`absolute text-center bottom-0 z-10 w-full h-0 bg-gray-800 text-sm text-gray-500 transition-all duration-500 ${
+          isLyricsPaneOpened ? "h-full p-4" : "h-0"
+        }`}>
+        {isLyricsPaneOpened ? (
+          <>
+            {lyrics ? (
+              <span className="whitespace-pre-wrap">{lyrics}</span>
+            ) : (
+              <div className="flex flex-col items-center space-y-4">
+                <Meh />
+                <p>No lyrics found for this track</p>
+              </div>
+            )}
+          </>
+        ) : null}
+      </div>
+
+      {data && audioState.time > 0 && (
+        <div className="flex flex-col h-full">
+          <div className="flex flex-col items-center justify-center max-w-xs pl-12 pr-12 mb-4">
             {audioState.duration && (
               <AudioPlayerSeekSlider
                 audioControls={audioControls}
@@ -160,7 +219,7 @@ export const NowPlaying: FC<{}> = () => {
               <Volume2 />
             </Button>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

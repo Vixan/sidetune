@@ -21,7 +21,7 @@ interface NavigationParams {
 }
 
 const Skeleton = () => (
-  <div className="flex flex-col items-center justify-center pl-12 pr-12 mb-4 space-y-3">
+  <div className="flex flex-col items-center justify-center pl-12 pr-12 mb-4 space-y-3 animate-pulse">
     <div className="w-48 h-48 bg-gray-600 rounded-lg"></div>
     <div className="flex flex-col items-center w-full space-y-2">
       <div className="w-1/4 h-4 bg-gray-600 rounded"></div>
@@ -83,8 +83,12 @@ export const AlbumPlaylist: FC<{}> = () => {
               className="object-cover w-40 h-40 mb-4 rounded-lg shadow-lg"
             />
             <div className="space-x-2 text-xs text-gray-600">
-              <span>{data.genres.data?.map(g => g.name).join(", ")}</span>
-              <span>·</span>
+              {data.genres.data.length > 0 && (
+                <div className="inline-flex flex-row space-x-2">
+                  <span>{data.genres.data?.map(g => g.name).join(", ")}</span>
+                  <span>·</span>
+                </div>
+              )}
               <span>{new Date(data.release_date).getFullYear()}</span>
             </div>
             <p className="text-lg font-bold text-teal-500">{data.title}</p>
