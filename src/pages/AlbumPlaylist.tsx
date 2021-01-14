@@ -46,8 +46,6 @@ export const AlbumPlaylist: FC<{}> = () => {
     setTransitioning(true);
   }, []);
 
-  console.log(data);
-
   return (
     <div
       className={`transition-all duration-500
@@ -91,7 +89,7 @@ export const AlbumPlaylist: FC<{}> = () => {
               )}
               <span>{new Date(data.release_date).getFullYear()}</span>
             </div>
-            <p className="text-lg font-bold text-teal-500">{data.title}</p>
+            <p className="text-lg font-bold text-center text-teal-500">{data.title}</p>
             <Link
               to="/"
               className="flex items-center space-x-2 text-sm text-gray-600 hover:text-white">

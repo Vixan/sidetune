@@ -60,6 +60,7 @@ export const NowPlaying: FC<{}> = () => {
   const playTrack = (data: Track) => {
     setAudioSource(data.preview);
     audioControls.seek(0);
+    audioControls.volume(0.5);
     audioControls.play();
   };
 
