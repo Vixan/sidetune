@@ -76,7 +76,6 @@ export const NowPlaying: FC<{}> = () => {
   const {
     tracks,
     setCurrentTrackId,
-    currentTrackId,
     nextTrack,
     previousTrack
   } = usePlaybackContext();
@@ -186,8 +185,7 @@ export const NowPlaying: FC<{}> = () => {
 
   const shuffleTracks = () => {
     const shuffledTracks = getShuffledArray(tracks);
-    setTracks(shuffledTracks);
-    history.replace(`${shuffledTracks[0].id}`);
+    history.replace(`${shuffledTracks[0].id}?shuffle=true`);
   };
 
   const toggleReplayTrack = () => {

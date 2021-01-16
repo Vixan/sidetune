@@ -110,7 +110,7 @@ export const AlbumPlaylist: FC<{}> = () => {
           </section>
           <section className="flex space-x-4 text-center">
             <Link
-              to={`play/${randomTrackId}?shuffle=true`}
+              to={`${albumId}/play/${randomTrackId}?shuffle=true`}
               className="inline-flex items-center justify-center flex-grow pt-2 pb-2 pl-6 pr-6 space-x-1 text-sm border-2 border-gray-700 rounded-full disabled:bg-transparent disabled:opacity-25 disabled:cursor-not-allowed hover:bg-gray-700">
               <Shuffle size={18} className="text-teal-500 fill-current" />
               <span className="text-teal-500">Shuffle</span>
@@ -125,7 +125,7 @@ export const AlbumPlaylist: FC<{}> = () => {
           <section className="flex flex-col space-y-2">
             {album.tracks.data.map(track => (
               <Link
-                to={`play/${track.id}`}
+                to={`${albumId}/play/${track.id}`}
                 className="flex flex-row items-center w-full space-x-4 rounded-lg cursor-pointer group"
                 key={track.id}>
                 <div className="flex items-center justify-center flex-none">
