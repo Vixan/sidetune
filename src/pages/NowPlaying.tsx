@@ -26,6 +26,7 @@ import { formatSecondsToHms } from "../utils/formatting";
 import { getLyrics } from "../api/lyricsApiService";
 import { useClickAway } from "react-use";
 import { UnexpectedErrorMessage } from "../components/UnexpectedErrorMessage";
+import { usePlaybackContext } from "../contexts/PlaybackContext";
 
 interface NavigationParams {
   trackId: string;
@@ -52,39 +53,45 @@ export const NowPlaying: FC<{}> = () => {
   const [isTransitioning, setTransitioning] = useState(false);
   const [isLyricsPaneOpened, setLyricsPaneOpened] = useState(false);
 
+  const { setCurrentTrackId, nextTrack, previousTrack } = usePlaybackContext();
+
   const ref = useRef(null);
   useClickAway(ref, () => {
     setLyricsPaneOpened(false);
   });
 
-  const playTrack = (data: Track) => {
-    setAudioSource(data.preview);
-    audioControls.seek(0);
-    audioControls.volume(0.5);
-    audioControls.play();
-  };
-
-  const { data, isLoading, isError, error } = useQuery<Track>(
+  const { data: track, isLoading, isError, error } = useQuery<Track>(
     ["track", trackId],
     async () => getTrack(parseInt(trackId)),
     {
-      staleTime: MAX_CACHE_STALE_TIME,
-      onSuccess: playTrack
+      staleTime: MAX_CACHE_STALE_TIME
     }
   );
 
   const { data: lyrics } = useQuery<string>(
     ["lyrics", trackId],
-    async () => getLyrics(data?.artist.name || "", data?.title || ""),
+    async () => getLyrics(track?.artist.name || "", track?.title || ""),
     {
-      enabled: data,
+      enabled: track,
       staleTime: 2 * MAX_CACHE_STALE_TIME
     }
   );
 
   useEffect(() => {
     setTransitioning(true);
+
+    audioControls.volume(0.5);
   }, []);
+
+  useEffect(() => {
+    if (track) {
+      setCurrentTrackId(track.id);
+      setAudioSource(track.preview);
+
+      audioControls.seek(0);
+      audioControls.play();
+    }
+  }, [track]);
 
   const togglePlayState = () => {
     if (audioState.paused) {
@@ -104,6 +111,18 @@ export const NowPlaying: FC<{}> = () => {
 
   const decreaseVolume = () => {
     setVolume(audioState.volume - 0.1);
+  };
+
+  const onPlayNextTrack = () => {
+    if (track && nextTrack?.id) {
+      history.push(`/play/${nextTrack.id}`);
+    }
+  };
+
+  const onPlayPreviousTrack = () => {
+    if (track && previousTrack?.id) {
+      history.push(`/play/${previousTrack.id}`);
+    }
   };
 
   return (
@@ -154,7 +173,7 @@ export const NowPlaying: FC<{}> = () => {
         ) : null}
       </div>
 
-      {data && audioState.time > 0 && (
+      {track && audioState.time > 0 && (
         <div className="flex flex-col h-full">
           <div className="flex flex-col items-center justify-center max-w-xs pl-12 pr-12 mb-4">
             {audioState.duration && (
@@ -162,7 +181,7 @@ export const NowPlaying: FC<{}> = () => {
                 audioControls={audioControls}
                 currentTime={audioState.time}
                 duration={audioState.duration}
-                coverImageUrl={data?.album.cover_big}
+                coverImageUrl={track?.album.cover_big}
               />
             )}
           </div>
@@ -173,12 +192,12 @@ export const NowPlaying: FC<{}> = () => {
               {formatSecondsToHms(audioState.duration)}
             </span>
             <p className="text-xl font-bold text-center text-teal-500">
-              {data.title}
+              {track.title}
             </p>
-            <p className="mb-2 text-sm">{data.artist.name}</p>
-            <p className="text-xs text-gray-600">
-              {data.album.title},{" "}
-              {new Date(data.album.release_date).getFullYear()}
+            <p className="mb-2 text-sm">{track.artist.name}</p>
+            <p className="text-xs text-center text-gray-600">
+              {track.album.title},{" "}
+              {new Date(track.album.release_date).getFullYear()}
             </p>
           </div>
 
@@ -186,7 +205,9 @@ export const NowPlaying: FC<{}> = () => {
             <Button disabled>
               <Shuffle size={16} className="fill-current" />
             </Button>
-            <Button className="p-4 hover:bg-gray-700">
+            <Button
+              className="p-4 hover:bg-gray-700"
+              onClick={onPlayPreviousTrack}>
               <SkipBack className="fill-current" />
             </Button>
             <Button
@@ -198,7 +219,9 @@ export const NowPlaying: FC<{}> = () => {
                 <Pause size={36} className="text-gray-800 fill-current" />
               )}
             </Button>
-            <Button className="p-4 bg-gray-800 hover:bg-gray-700">
+            <Button
+              className="p-4 bg-gray-800 hover:bg-gray-700"
+              onClick={onPlayNextTrack}>
               <SkipForward className="fill-current" />
             </Button>
             <Button disabled>

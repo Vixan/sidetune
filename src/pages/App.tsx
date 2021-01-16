@@ -11,6 +11,7 @@ import { AudioProvider } from "../contexts/AudioContext";
 import { AlbumPlaylist } from "./AlbumPlaylist";
 import { ReactQueryDevtools } from "react-query-devtools";
 import { ReactQueryCacheProvider, QueryCache } from "react-query";
+import { PlaybackProvider } from "../contexts/PlaybackContext";
 
 const queryCache = new QueryCache({
   defaultConfig: {
@@ -33,12 +34,16 @@ export const App: FC<{}> = () => {
                 <Home />
               </Route>
               <Route path="/play/:trackId">
-                <AudioProvider>
-                  <NowPlaying />
-                </AudioProvider>
+                <PlaybackProvider>
+                  <AudioProvider>
+                    <NowPlaying />
+                  </AudioProvider>
+                </PlaybackProvider>
               </Route>
               <Route path="/album/:albumId">
-                <AlbumPlaylist />
+                <PlaybackProvider>
+                  <AlbumPlaylist />
+                </PlaybackProvider>
               </Route>
               <Route>
                 <Redirect to="/" />

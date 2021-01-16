@@ -15,6 +15,7 @@ import { UnexpectedErrorMessage } from "../components/UnexpectedErrorMessage";
 import { Album } from "../models/Album";
 import { MAX_CACHE_STALE_TIME } from "../utils/caching";
 import { formatSecondsToHms } from "../utils/formatting";
+import { usePlaybackContext } from "../contexts/PlaybackContext";
 
 interface NavigationParams {
   albumId: string;
@@ -41,10 +42,24 @@ export const AlbumPlaylist: FC<{}> = () => {
       staleTime: MAX_CACHE_STALE_TIME
     }
   );
+  const { setTracks } = usePlaybackContext();
 
   useEffect(() => {
     setTransitioning(true);
   }, []);
+
+  const onPlayAlbumQueue = () => {
+    if (data?.tracks.data) {
+      const queueTracks = data.tracks.data.map((track, i) => ({
+        id: track.id,
+        title: track.title,
+        url: track.preview,
+        order: i
+      }));
+
+      setTracks(queueTracks);
+    }
+  };
 
   return (
     <div
@@ -89,7 +104,9 @@ export const AlbumPlaylist: FC<{}> = () => {
               )}
               <span>{new Date(data.release_date).getFullYear()}</span>
             </div>
-            <p className="text-lg font-bold text-center text-teal-500">{data.title}</p>
+            <p className="text-lg font-bold text-center text-teal-500">
+              {data.title}
+            </p>
             <Link
               to="/"
               className="flex items-center space-x-2 text-sm text-gray-600 hover:text-white">
@@ -118,6 +135,7 @@ export const AlbumPlaylist: FC<{}> = () => {
             {data.tracks.data.map(track => (
               <Link
                 to={`/play/${track.id}`}
+                onClick={onPlayAlbumQueue}
                 className="flex flex-row items-center w-full space-x-4 rounded-lg cursor-pointer group"
                 key={track.id}>
                 <div className="flex items-center justify-center flex-none">
