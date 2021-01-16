@@ -1,17 +1,10 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import {
-  AlignLeft, ChevronLeft,
+  AlignLeft,
+  ChevronLeft,
   Heart,
-
-
-
-
-
-
-
-
-
-  Meh, Pause,
+  Meh,
+  Pause,
   Play,
   Repeat,
   Shuffle,
@@ -22,7 +15,7 @@ import {
 } from "react-feather";
 import { useQuery } from "react-query";
 import { useHistory, useParams } from "react-router-dom";
-import { useClickAway } from "react-use";
+import { useClickAway, useLocation } from "react-use";
 import { getAlbumPlaylist } from "../api/albumsApiService";
 import { getLyrics } from "../api/lyricsApiService";
 import { getTrack } from "../api/tracksApiService";
@@ -36,6 +29,8 @@ import { Album } from "../models/Album";
 import { Track } from "../models/Track";
 import { MAX_CACHE_STALE_TIME } from "../utils/caching";
 import { formatSecondsToHms } from "../utils/formatting";
+import { getShuffledArray } from "../utils/randomUtils";
+import { useLocationQueryString } from "../utils/routerUtils";
 
 interface NavigationParams {
   albumId: string;
@@ -57,6 +52,7 @@ const Skeleton = () => (
 
 export const NowPlaying: FC<{}> = () => {
   const { albumId, trackId } = useParams<NavigationParams>();
+  const querySearchParams = useLocationQueryString();
   const history = useHistory();
 
   const { setAudioSource, audioState, audioControls } = useAudioContext();
@@ -102,7 +98,13 @@ export const NowPlaying: FC<{}> = () => {
 
   const setAlbumQueue = () => {
     if (album?.tracks?.data) {
-      const queueTracks = album.tracks.data.map((track, i) => ({
+      const shuffleAlbum = querySearchParams.get("shuffle");
+
+      const albumQueue = shuffleAlbum
+        ? getShuffledArray(album.tracks.data)
+        : album.tracks.data;
+
+      const queueTracks = albumQueue.map((track, i) => ({
         id: track.id,
         title: track.title,
         url: track.preview,
@@ -249,6 +251,7 @@ export const NowPlaying: FC<{}> = () => {
             </Button>
             <Button
               className="p-4 hover:bg-gray-700"
+              disabled={!previousTrack}
               onClick={onPlayPreviousTrack}>
               <SkipBack className="fill-current" />
             </Button>
@@ -263,6 +266,7 @@ export const NowPlaying: FC<{}> = () => {
             </Button>
             <Button
               className="p-4 bg-gray-800 hover:bg-gray-700"
+              disabled={!nextTrack}
               onClick={onPlayNextTrack}>
               <SkipForward className="fill-current" />
             </Button>
