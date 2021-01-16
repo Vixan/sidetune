@@ -15,7 +15,6 @@ import { UnexpectedErrorMessage } from "../components/UnexpectedErrorMessage";
 import { Album } from "../models/Album";
 import { MAX_CACHE_STALE_TIME } from "../utils/caching";
 import { formatSecondsToHms } from "../utils/formatting";
-import { usePlaybackContext } from "../contexts/PlaybackContext";
 
 interface NavigationParams {
   albumId: string;
@@ -35,31 +34,17 @@ const Skeleton = () => (
 export const AlbumPlaylist: FC<{}> = () => {
   const { albumId } = useParams<NavigationParams>();
   const [isTransitioning, setTransitioning] = useState(false);
-  const { data, isLoading, isError } = useQuery<Album>(
+  const { data: album, isLoading, isError } = useQuery<Album>(
     ["albumPlaylist", albumId],
     async () => await getAlbumPlaylist(parseInt(albumId)),
     {
       staleTime: MAX_CACHE_STALE_TIME
     }
   );
-  const { setTracks } = usePlaybackContext();
 
   useEffect(() => {
     setTransitioning(true);
   }, []);
-
-  const onPlayAlbumQueue = () => {
-    if (data?.tracks.data) {
-      const queueTracks = data.tracks.data.map((track, i) => ({
-        id: track.id,
-        title: track.title,
-        url: track.preview,
-        order: i
-      }));
-
-      setTracks(queueTracks);
-    }
-  };
 
   return (
     <div
@@ -87,36 +72,36 @@ export const AlbumPlaylist: FC<{}> = () => {
         <UnexpectedErrorMessage description="Could not load album playlist" />
       )}
 
-      {data && (
+      {album && (
         <div className="flex flex-col space-y-6">
           <section className="flex flex-col items-center space-y-2">
             <img
-              src={data.cover_big}
+              src={album.cover_big}
               alt="Album cover"
               className="object-cover w-40 h-40 mb-4 rounded-lg shadow-lg"
             />
             <div className="space-x-2 text-xs text-gray-600">
-              {data.genres.data.length > 0 && (
+              {album.genres.data.length > 0 && (
                 <div className="inline-flex flex-row space-x-2">
-                  <span>{data.genres.data?.map(g => g.name).join(", ")}</span>
+                  <span>{album.genres.data?.map(g => g.name).join(", ")}</span>
                   <span>·</span>
                 </div>
               )}
-              <span>{new Date(data.release_date).getFullYear()}</span>
+              <span>{new Date(album.release_date).getFullYear()}</span>
             </div>
             <p className="text-lg font-bold text-center text-teal-500">
-              {data.title}
+              {album.title}
             </p>
             <Link
               to="/"
               className="flex items-center space-x-2 text-sm text-gray-600 hover:text-white">
-              {data.artist.name}
+              {album.artist.name}
               <ChevronRight size={14} />
             </Link>
             <div className="space-x-2 text-xs text-gray-600">
-              <span>{data.tracks.data.length} tracks</span>
+              <span>{album.tracks.data.length} tracks</span>
               <span>·</span>
-              <span>{formatSecondsToHms(data.duration)}</span>
+              <span>{formatSecondsToHms(album.duration)}</span>
             </div>
           </section>
           <section className="flex space-x-4 text-center">
@@ -132,10 +117,9 @@ export const AlbumPlaylist: FC<{}> = () => {
             </Button>
           </section>
           <section className="flex flex-col space-y-2">
-            {data.tracks.data.map(track => (
+            {album.tracks.data.map(track => (
               <Link
-                to={`/play/${track.id}`}
-                onClick={onPlayAlbumQueue}
+                to={`${albumId}/play/${track.id}`}
                 className="flex flex-row items-center w-full space-x-4 rounded-lg cursor-pointer group"
                 key={track.id}>
                 <div className="flex items-center justify-center flex-none">
@@ -145,7 +129,7 @@ export const AlbumPlaylist: FC<{}> = () => {
                     className="absolute opacity-0 fill-current group-hover:opacity-100"
                   />
                   <img
-                    src={data.cover_big}
+                    src={album.cover_big}
                     className="w-16 h-16 rounded-lg"
                     alt={track.title}
                   />

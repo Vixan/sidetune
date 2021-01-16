@@ -33,7 +33,7 @@ export const App: FC<{}> = () => {
               <Route exact path="/">
                 <Home />
               </Route>
-              <Route path="/play/:trackId">
+              <Route path="/album/:albumId/play/:trackId">
                 <PlaybackProvider>
                   <AudioProvider>
                     <NowPlaying />

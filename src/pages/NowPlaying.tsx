@@ -1,34 +1,44 @@
-import React, { FC, useEffect, useState, useRef } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import {
-  ChevronLeft,
+  AlignLeft, ChevronLeft,
   Heart,
-  Pause,
+
+
+
+
+
+
+
+
+
+  Meh, Pause,
   Play,
   Repeat,
   Shuffle,
   SkipBack,
   SkipForward,
   Volume1,
-  Volume2,
-  AlignLeft,
-  Meh
+  Volume2
 } from "react-feather";
 import { useQuery } from "react-query";
 import { useHistory, useParams } from "react-router-dom";
+import { useClickAway } from "react-use";
+import { getAlbumPlaylist } from "../api/albumsApiService";
+import { getLyrics } from "../api/lyricsApiService";
 import { getTrack } from "../api/tracksApiService";
 import { AudioPlayerSeekSlider } from "../components/AudioPlayerSeekSlider";
 import { AudioPlayerVolumeSlider } from "../components/AudioPlayerVolumeSlider";
 import { Button } from "../components/Button";
+import { UnexpectedErrorMessage } from "../components/UnexpectedErrorMessage";
 import { useAudioContext } from "../contexts/AudioContext";
+import { usePlaybackContext } from "../contexts/PlaybackContext";
+import { Album } from "../models/Album";
 import { Track } from "../models/Track";
 import { MAX_CACHE_STALE_TIME } from "../utils/caching";
 import { formatSecondsToHms } from "../utils/formatting";
-import { getLyrics } from "../api/lyricsApiService";
-import { useClickAway } from "react-use";
-import { UnexpectedErrorMessage } from "../components/UnexpectedErrorMessage";
-import { usePlaybackContext } from "../contexts/PlaybackContext";
 
 interface NavigationParams {
+  albumId: string;
   trackId: string;
 }
 
@@ -46,12 +56,25 @@ const Skeleton = () => (
 );
 
 export const NowPlaying: FC<{}> = () => {
-  const { trackId } = useParams<NavigationParams>();
+  const { albumId, trackId } = useParams<NavigationParams>();
   const history = useHistory();
 
   const { setAudioSource, audioState, audioControls } = useAudioContext();
   const [isTransitioning, setTransitioning] = useState(false);
   const [isLyricsPaneOpened, setLyricsPaneOpened] = useState(false);
+
+  const {
+    data: album,
+    isLoading: isAlbumLoading,
+    isError: isAlbumError
+  } = useQuery<Album>(
+    ["albumPlaylist", albumId],
+    async () => await getAlbumPlaylist(parseInt(albumId)),
+    {
+      staleTime: MAX_CACHE_STALE_TIME
+    }
+  );
+  const { setTracks } = usePlaybackContext();
 
   const { setCurrentTrackId, nextTrack, previousTrack } = usePlaybackContext();
 
@@ -77,11 +100,28 @@ export const NowPlaying: FC<{}> = () => {
     }
   );
 
+  const setAlbumQueue = () => {
+    if (album?.tracks?.data) {
+      const queueTracks = album.tracks.data.map((track, i) => ({
+        id: track.id,
+        title: track.title,
+        url: track.preview,
+        order: i
+      }));
+
+      setTracks(queueTracks);
+    }
+  };
+
   useEffect(() => {
     setTransitioning(true);
 
     audioControls.volume(0.5);
   }, []);
+
+  useEffect(() => {
+    setAlbumQueue();
+  }, [album]);
 
   useEffect(() => {
     if (track) {
@@ -115,13 +155,13 @@ export const NowPlaying: FC<{}> = () => {
 
   const onPlayNextTrack = () => {
     if (track && nextTrack?.id) {
-      history.push(`/play/${nextTrack.id}`);
+      history.replace({ pathname: `${nextTrack.id}` });
     }
   };
 
   const onPlayPreviousTrack = () => {
     if (track && previousTrack?.id) {
-      history.push(`/play/${previousTrack.id}`);
+      history.replace(`${previousTrack.id}`);
     }
   };
 
@@ -150,9 +190,11 @@ export const NowPlaying: FC<{}> = () => {
         </div>
       </div>
 
-      {isLoading && <Skeleton />}
+      {(isAlbumLoading || isLoading) && <Skeleton />}
 
-      {isError && <UnexpectedErrorMessage description={error as string} />}
+      {(isError || isAlbumError) && (
+        <UnexpectedErrorMessage description={error as string} />
+      )}
 
       <div
         ref={ref}
