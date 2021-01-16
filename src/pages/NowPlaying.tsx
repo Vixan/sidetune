@@ -15,7 +15,7 @@ import {
 } from "react-feather";
 import { useQuery } from "react-query";
 import { useHistory, useParams } from "react-router-dom";
-import { useClickAway, useLocation } from "react-use";
+import { useClickAway } from "react-use";
 import { getAlbumPlaylist } from "../api/albumsApiService";
 import { getLyrics } from "../api/lyricsApiService";
 import { getTrack } from "../api/tracksApiService";
@@ -58,6 +58,7 @@ export const NowPlaying: FC<{}> = () => {
   const { setAudioSource, audioState, audioControls } = useAudioContext();
   const [isTransitioning, setTransitioning] = useState(false);
   const [isLyricsPaneOpened, setLyricsPaneOpened] = useState(false);
+  const [replayTrack, setReplayTrack] = useState(false);
 
   const {
     data: album,
@@ -72,7 +73,13 @@ export const NowPlaying: FC<{}> = () => {
   );
   const { setTracks } = usePlaybackContext();
 
-  const { setCurrentTrackId, nextTrack, previousTrack } = usePlaybackContext();
+  const {
+    tracks,
+    setCurrentTrackId,
+    currentTrackId,
+    nextTrack,
+    previousTrack
+  } = usePlaybackContext();
 
   const ref = useRef(null);
   useClickAway(ref, () => {
@@ -125,7 +132,7 @@ export const NowPlaying: FC<{}> = () => {
     setAlbumQueue();
   }, [album]);
 
-  useEffect(() => {
+  const playCurrentTrack = () => {
     if (track) {
       setCurrentTrackId(track.id);
       setAudioSource(track.preview);
@@ -133,7 +140,17 @@ export const NowPlaying: FC<{}> = () => {
       audioControls.seek(0);
       audioControls.play();
     }
+  };
+
+  useEffect(() => {
+    playCurrentTrack();
   }, [track]);
+
+  useEffect(() => {
+    if (audioState.time === audioState.duration && replayTrack) {
+      playCurrentTrack();
+    }
+  }, [audioState]);
 
   const togglePlayState = () => {
     if (audioState.paused) {
@@ -165,6 +182,16 @@ export const NowPlaying: FC<{}> = () => {
     if (track && previousTrack?.id) {
       history.replace(`${previousTrack.id}`);
     }
+  };
+
+  const shuffleTracks = () => {
+    const shuffledTracks = getShuffledArray(tracks);
+    setTracks(shuffledTracks);
+    history.replace(`${shuffledTracks[0].id}`);
+  };
+
+  const toggleReplayTrack = () => {
+    setReplayTrack(!replayTrack);
   };
 
   return (
@@ -246,8 +273,12 @@ export const NowPlaying: FC<{}> = () => {
           </div>
 
           <div className="flex items-center justify-center mb-6 ml-4 mr-4 space-x-2">
-            <Button disabled>
-              <Shuffle size={16} className="fill-current" />
+            <Button className="p-2">
+              <Shuffle
+                size={16}
+                className="fill-current"
+                onClick={shuffleTracks}
+              />
             </Button>
             <Button
               className="p-4 hover:bg-gray-700"
@@ -270,7 +301,11 @@ export const NowPlaying: FC<{}> = () => {
               onClick={onPlayNextTrack}>
               <SkipForward className="fill-current" />
             </Button>
-            <Button disabled>
+            <Button
+              onClick={toggleReplayTrack}
+              className={`p-2 fill-current ${
+                replayTrack ? "bg-teal-500" : ""
+              }`}>
               <Repeat size={16} className="fill-current" />
             </Button>
           </div>
