@@ -12,6 +12,10 @@ import { AlbumPlaylist } from "./AlbumPlaylist";
 import { ReactQueryDevtools } from "react-query-devtools";
 import { ReactQueryCacheProvider, QueryCache } from "react-query";
 import { PlaybackProvider } from "../contexts/PlaybackContext";
+import { AuthProvider } from "../contexts/AuthContext";
+import { SignIn } from "./SignIn";
+import { PrivateRoute } from "../components/PrivateRoute";
+import { UserSettings } from "./UserSettings";
 
 const queryCache = new QueryCache({
   defaultConfig: {
@@ -24,34 +28,46 @@ const queryCache = new QueryCache({
 export const App: FC<{}> = () => {
   return (
     <ReactQueryCacheProvider queryCache={queryCache}>
-      <Router>
-        <div className="flex flex-wrap content-center justify-center h-screen scrolling-auto bg-gradient-to-r from-teal-400 to-blue-700">
-          <div
-            className="h-full p-6 overflow-y-auto text-white bg-gray-800 shadow-2xl rounded-xl"
-            style={{ width: 375, maxHeight: 650 }}>
-            <Switch>
-              <Route exact path="/">
-                <Home />
-              </Route>
-              <Route path="/album/:albumId/play/:trackId">
-                <PlaybackProvider>
-                  <AudioProvider>
-                    <NowPlaying />
-                  </AudioProvider>
-                </PlaybackProvider>
-              </Route>
-              <Route path="/album/:albumId">
-                <PlaybackProvider>
-                  <AlbumPlaylist />
-                </PlaybackProvider>
-              </Route>
-              <Route>
-                <Redirect to="/" />
-              </Route>
-            </Switch>
+      <AuthProvider>
+        <Router>
+          <div className="flex flex-wrap content-center justify-center h-screen scrolling-auto bg-gradient-to-r from-teal-400 to-blue-700">
+            <div
+              className="h-full p-6 overflow-y-auto text-white bg-gray-800 shadow-2xl rounded-xl"
+              style={{ width: 375, maxHeight: 650 }}>
+              <Switch>
+                <PrivateRoute exact path="/">
+                  <Home />
+                </PrivateRoute>
+                <Route exact path="/sign-in">
+                  <SignIn />
+                </Route>
+
+                <PrivateRoute exact path="/user">
+                  <UserSettings />
+                </PrivateRoute>
+
+                <PrivateRoute exact path="/album/:albumId/play/:trackId">
+                  <PlaybackProvider>
+                    <AudioProvider>
+                      <NowPlaying />
+                    </AudioProvider>
+                  </PlaybackProvider>
+                </PrivateRoute>
+                <PrivateRoute exact path="/album/:albumId">
+                  <PlaybackProvider>
+                    <AlbumPlaylist />
+                  </PlaybackProvider>
+                </PrivateRoute>
+
+                <Route>
+                  <Redirect to="/" />
+                </Route>
+              </Switch>
+            </div>
           </div>
-        </div>
-      </Router>
+        </Router>
+      </AuthProvider>
+
       <ReactQueryDevtools />
     </ReactQueryCacheProvider>
   );
