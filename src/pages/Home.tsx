@@ -5,16 +5,16 @@ import { Link } from "react-router-dom";
 import { useAuthContext } from "../contexts/AuthContext";
 
 export const Home: FC<{}> = () => {
-  const { user } = useAuthContext();
+  const { currentUser } = useAuthContext();
 
   return (
     <>
       <header className="flex items-center text-gray-600 body-font">
         <div className="w-10 h-10 bg-teal-500 rounded-full">
           <Link to="/user">
-            {user?.photoURL ? (
+            {currentUser?.photoURL ? (
               <img
-                src={user.photoURL}
+                src={currentUser.photoURL}
                 alt="User avatar"
                 className="w-full h-full rounded-full"></img>
             ) : (

@@ -6,7 +6,7 @@ export const PrivateRoute: FC<PropsWithChildren<RouteProps>> = ({
   children,
   ...privateRouteProps
 }) => {
-  const { user, loading } = useAuthContext();
+  const { currentUser, loading } = useAuthContext();
 
   if (loading) {
     return <></>
@@ -14,7 +14,7 @@ export const PrivateRoute: FC<PropsWithChildren<RouteProps>> = ({
 
   return (
     <Route {...privateRouteProps}>
-      {user ? children : <Redirect to="/sign-in" />}
+      {currentUser ? children : <Redirect to="/sign-in" />}
     </Route>
   );
 };

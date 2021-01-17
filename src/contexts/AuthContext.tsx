@@ -6,7 +6,7 @@ import { FIREBASE_CONFIG } from "../config/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 export interface AuthContextProps {
-  user: firebase.User | null;
+  currentUser: firebase.User | null;
   loading: boolean;
   error: any;
   signInWithGoogle: () => void;
@@ -17,7 +17,7 @@ export interface AuthContextProps {
 }
 
 export const AuthContext = createContext<AuthContextProps>({
-  user: null,
+  currentUser: null,
   loading: false,
   error: null,
   signInWithGoogle: () => {},
@@ -32,7 +32,7 @@ const auth = firebase.auth();
 const firestore = firebase.firestore();
 
 export const AuthProvider: FC<PropsWithChildren<Props>> = ({ children }) => {
-  const [user, loading, error] = useAuthState(auth);
+  const [currentUser, loading, error] = useAuthState(auth);
 
   const signInWithGoogle = () => {
     const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
@@ -44,17 +44,17 @@ export const AuthProvider: FC<PropsWithChildren<Props>> = ({ children }) => {
   };
 
   const onAuthStateChanged = (
-    callback: (user: firebase.User | null) => void
+    callback: (currentUser: firebase.User | null) => void
   ) => {
-    return auth.onAuthStateChanged(user => {
-      callback(user);
+    return auth.onAuthStateChanged(currentUser => {
+      callback(currentUser);
     });
   };
 
   return (
     <AuthContext.Provider
       value={{
-        user,
+        currentUser,
         loading,
         error,
         signInWithGoogle,

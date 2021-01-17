@@ -8,7 +8,7 @@ import { LogOut } from "react-feather";
 interface Props {}
 
 export const UserSettings: FC<Props> = (props: Props) => {
-  const { user, signOut } = useAuthContext();
+  const { currentUser, signOut } = useAuthContext();
   const history = useHistory();
   const [isTransitioning, setTransitioning] = useState(false);
 
@@ -40,7 +40,7 @@ export const UserSettings: FC<Props> = (props: Props) => {
       <div className="flex flex-col space-y-16">
         <h1 className="text-lg">
           How are you, <br />
-          {user?.displayName}?
+          {currentUser?.displayName}?
         </h1>
 
         <div className="flex items-center justify-center">
