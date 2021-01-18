@@ -9,7 +9,7 @@ import {
 } from "react-feather";
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
-import { getAlbumPlaylist } from "../api/albumsApiService";
+import { getAlbumPlaylist } from "../api/deezerApiService";
 import { Button } from "../components/Button";
 import { UnexpectedErrorMessage } from "../components/UnexpectedErrorMessage";
 import { Album } from "../models/Album";

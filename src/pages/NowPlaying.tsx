@@ -16,9 +16,8 @@ import {
 import { useQuery } from "react-query";
 import { useHistory, useParams } from "react-router-dom";
 import { useClickAway } from "react-use";
-import { getAlbumPlaylist } from "../api/albumsApiService";
+import { getAlbumPlaylist, getTrack } from "../api/deezerApiService";
 import { getLyrics } from "../api/lyricsApiService";
-import { getTrack } from "../api/tracksApiService";
 import { AudioPlayerSeekSlider } from "../components/AudioPlayerSeekSlider";
 import { AudioPlayerVolumeSlider } from "../components/AudioPlayerVolumeSlider";
 import { Button } from "../components/Button";

@@ -1,9 +1,9 @@
 import React, { FC } from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
-import { getTopAlbums } from "../api/albumsApiService";
+import { getTopAlbums } from "../api/deezerApiService";
 import Carousel from "react-elastic-carousel";
-import { PagedResponse } from "../api/apiResponse";
+import { PagedResponse } from "../types/apiResponse";
 import { TopAlbum } from "../models/TopAlbum";
 import { CarouselTopAlbum, CarouselTopAlbumSkeleton } from "./CarouselTopAlbum";
 import { MAX_CACHE_STALE_TIME } from "../utils/caching";

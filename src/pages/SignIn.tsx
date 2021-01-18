@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from "react";
 import { Button } from "../components/Button";
-import { ReactComponent as GoogleIcon } from "../icons/google.svg";
+import { ReactComponent as GoogleIcon } from "../assets/icons/google.svg";
 import { useAuthContext } from "../contexts/AuthContext";
 import { Redirect } from "react-router-dom";
 import firebase from "firebase/app";

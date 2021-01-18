@@ -27,6 +27,10 @@ module.exports = {
       }
     }
   },
+  plugins: [
+    // FIXME: Plugin not working, styles not applied to checkbox for example.
+    require("@tailwindcss/forms")
+  ],
   variants: {
     // Extend the existing variants to support the disabled core utility
     // using textColor: ({after}) => after([])
