@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState } from "react";
 import { ArrowRight } from "react-feather";
 import { useDocumentDataOnce } from "react-firebase-hooks/firestore";
 import { useQuery } from "react-query";
+import { useHistory } from "react-router-dom";
 import { getGenres } from "../api/deezerApiService";
 import {
   getUserDocumentByUid,
@@ -40,6 +41,8 @@ export const FavoriteArtists: FC = () => {
     currentUser && getUserDocumentByUid(currentUser?.uid)
   );
 
+  const history = useHistory();
+
   const [selectedGenres, setSelectedGenres] = useState<Genre[]>([]);
 
   const onChangeGenreChecked = (checked: boolean, genre: Genre) => {
@@ -51,6 +54,8 @@ export const FavoriteArtists: FC = () => {
   const onContinue = async () => {
     if (currentUser) {
       await trySetUserFavoriteGenres(currentUser, selectedGenres);
+
+      history.push("/");
     }
   };
 
@@ -65,7 +70,7 @@ export const FavoriteArtists: FC = () => {
 
   return (
     <div className="relative h-full space-y-8">
-      <h1 className="text-lg">Pick your favorite music genres</h1>
+      <h1 className="text-lg text-gray-600">Pick your favorite music genres</h1>
 
       {(isGenreLoading || isUserLoading) && <Skeleton />}
       {isGenreError && (

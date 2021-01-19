@@ -1,7 +1,10 @@
 import "firebase/firestore";
 import React, { FC, useEffect } from "react";
-import { Redirect } from "react-router-dom";
-import { tryCreateAuthAssociatedUser } from "../api/firestoreService";
+import { useHistory } from "react-router-dom";
+import {
+  getUserDocumentByUid,
+  tryCreateAuthAssociatedUser
+} from "../api/firestoreService";
 import { ReactComponent as GoogleIcon } from "../assets/icons/google.svg";
 import { Button } from "../components/Button";
 import { useAuthContext } from "../contexts/AuthContext";
@@ -11,19 +14,25 @@ interface Props {}
 export const SignIn: FC<Props> = () => {
   const { currentUser, signInWithGoogle } = useAuthContext();
 
+  const history = useHistory();
+
   useEffect(() => {
     const createUser = async () => {
       if (currentUser) {
-        await tryCreateAuthAssociatedUser(currentUser);
+        const user = await getUserDocumentByUid(currentUser.uid).get();
+
+        if (!user.exists) {
+          await tryCreateAuthAssociatedUser(currentUser);
+
+          history.push("/favorite-genres");
+        } else {
+          history.push("/");
+        }
       }
     };
 
     createUser();
-  }, [currentUser]);
-
-  if (currentUser) {
-    return <Redirect to="/" />;
-  }
+  }, [currentUser, history]);
 
   return (
     <div className="flex items-center justify-center w-full h-full">

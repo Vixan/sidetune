@@ -1,6 +1,5 @@
 import firebase from "firebase/app";
 import "firebase/auth";
-import "firebase/firestore";
 import React, { createContext, PropsWithChildren, FC, useContext } from "react";
 import { FIREBASE_CONFIG } from "../config/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -29,7 +28,6 @@ interface Props {}
 
 firebase.initializeApp(FIREBASE_CONFIG);
 const auth = firebase.auth();
-const firestore = firebase.firestore();
 
 export const AuthProvider: FC<PropsWithChildren<Props>> = ({ children }) => {
   const [currentUser, loading, error] = useAuthState(auth);

@@ -19,7 +19,7 @@ export const GenreItem: FC<GenreItemProps> = ({
 
   return (
     <div
-      className="text-xs text-left outline-none cursor-pointer hover:opacity-75"
+      className="text-xs text-left cursor-pointer hover:opacity-75"
       onClick={() => onChange(!isSelected)}>
       <div className="relative flex-row space-y-3">
         <img
