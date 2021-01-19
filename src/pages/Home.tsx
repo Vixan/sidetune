@@ -8,14 +8,16 @@ export const Home: FC<{}> = () => {
   const { currentUser } = useAuthContext();
 
   return (
-    <>
+    <div className="space-y-4">
       <header className="flex items-center text-gray-600 body-font">
-        <div className="w-10 h-10 bg-teal-500 rounded-full">
+        <div
+          className="w-10 h-10 bg-teal-500 rounded-full"
+          title="User settings">
           <Link to="/user">
             {currentUser?.photoURL ? (
               <img
                 src={currentUser.photoURL}
-                alt="User avatar"
+                alt="Your avatar"
                 className="w-full h-full rounded-full"></img>
             ) : (
               <User className="w-full h-full p-2 text-gray-800 rounded-full" />
@@ -32,6 +34,6 @@ export const Home: FC<{}> = () => {
         </div>
       </header>
       <TopAlbumsSection />
-    </>
+    </div>
   );
 };

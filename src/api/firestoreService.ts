@@ -7,7 +7,7 @@ import { UserFavoriteGenre } from "../models/UserFavoriteGenre";
 
 const firestore = firebase.firestore();
 
-const logError = (message: string, userUId?: string) => {
+export const logError = (message: string, userUId?: string) => {
   const usersCollection = firestore.collection("logs");
   const log: Log = {
     level: LogLevel.Error,
@@ -46,7 +46,6 @@ export const trySetUserFavoriteGenres = async (
       }))
     });
   } catch (exception) {
-    console.log(exception);
     logError(exception?.message, user.uid);
   }
 };

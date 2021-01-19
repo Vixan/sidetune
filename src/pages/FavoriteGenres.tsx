@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { ArrowRight } from "react-feather";
+import { ArrowRight, BookOpen, ChevronLeft } from "react-feather";
 import { useDocumentDataOnce } from "react-firebase-hooks/firestore";
 import { useQuery } from "react-query";
 import { useHistory } from "react-router-dom";
@@ -40,6 +40,11 @@ export const FavoriteArtists: FC = () => {
   const [user, isUserLoading, userError] = useDocumentDataOnce<User>(
     currentUser && getUserDocumentByUid(currentUser?.uid)
   );
+  const [isTransitioning, setTransitioning] = useState(false);
+
+  useEffect(() => {
+    setTransitioning(true);
+  }, []);
 
   const history = useHistory();
 
@@ -69,7 +74,22 @@ export const FavoriteArtists: FC = () => {
   }, [isUserLoading]);
 
   return (
-    <div className="relative h-full space-y-8">
+    <div className="relative h-full space-y-4 space-y-8 text-center">
+      <section className="flex items-center text-gray-600 body-font">
+        <div className="flex">
+          <Button
+            className="p-2 text-white hover:bg-gray-700"
+            onClick={() => history.goBack()}>
+            <ChevronLeft />
+          </Button>
+        </div>
+
+        <div className="flex items-center ml-auto space-x-2 text-lg font-bold">
+          <BookOpen className="w-4 h-4" />
+          <span>Genres</span>
+        </div>
+        <div className="w-10 ml-auto text-lg font-bold"></div>
+      </section>
       <h1 className="text-lg text-gray-600">Pick your favorite music genres</h1>
 
       {(isGenreLoading || isUserLoading) && <Skeleton />}
@@ -93,6 +113,7 @@ export const FavoriteArtists: FC = () => {
         </div>
       )}
       <div className="w-full h-16"></div>
+
       <div className="absolute bottom-0 flex items-center justify-center w-full p-4">
         {individualGenres && user && (
           <Button

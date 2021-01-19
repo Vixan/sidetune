@@ -26,7 +26,7 @@ export const TopAlbumsSection: FC<{}> = () => {
 
   return (
     <>
-      <section className="pt-4 pb-4">
+      <section>
         <div className="flex items-center mb-8">
           <h1 className="text-2xl text-teal-500">Top Albums</h1>
           <Link
