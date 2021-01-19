@@ -28,7 +28,6 @@ module.exports = {
     }
   },
   plugins: [
-    // FIXME: Plugin not working, styles not applied to checkbox for example.
     require("@tailwindcss/forms")
   ],
   variants: {
