@@ -8,6 +8,7 @@ import { TopAlbum } from "../models/TopAlbum";
 import { CarouselTopAlbum, CarouselTopAlbumSkeleton } from "./CarouselTopAlbum";
 import { MAX_CACHE_STALE_TIME } from "../utils/caching";
 import { UnexpectedErrorMessage } from "./UnexpectedErrorMessage";
+import { Genre } from "../models/Genre";
 
 const Skeleton = () => (
   <div className="flex w-full text-xs text-left animate-pulse">
@@ -17,10 +18,14 @@ const Skeleton = () => (
   </div>
 );
 
-export const TopAlbumsSection: FC<{}> = () => {
+interface Props {
+  genre?: Genre;
+}
+
+export const TopAlbumsSection: FC<Props> = ({ genre }) => {
   const { data: albumsPage, isLoading, isError } = useQuery<
     PagedResponse<TopAlbum[]>
-  >("topAlbums", getTopAlbums, {
+  >(`top${genre?.name || "All"}Albums`, async () => await getTopAlbums(genre), {
     staleTime: MAX_CACHE_STALE_TIME
   });
 
@@ -28,7 +33,9 @@ export const TopAlbumsSection: FC<{}> = () => {
     <>
       <section>
         <div className="flex items-center mb-8">
-          <h1 className="text-2xl text-teal-500">Top Albums</h1>
+          <h1 className="text-xl text-teal-500">
+            Top {genre?.name || "All"} Albums
+          </h1>
           <Link
             to="/"
             className="ml-auto text-sm text-gray-600 hover:text-gray-500">

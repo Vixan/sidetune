@@ -5,9 +5,13 @@ import { TopAlbum } from "../models/TopAlbum";
 import { Genre } from "../models/Genre";
 import { Track } from "../models/Track";
 
-export const getTopAlbums = async (): Promise<PagedResponse<TopAlbum[]>> => {
+const ALL_GENRE_DEEZER_ID = 0;
+
+export const getTopAlbums = async (
+  genre?: Genre
+): Promise<PagedResponse<TopAlbum[]>> => {
   const response = await deezerService.get<PagedResponse<TopAlbum[]>>(
-    "/chart/0/albums"
+    `/chart/${genre?.id || ALL_GENRE_DEEZER_ID}/albums`
   );
 
   return response.data;
