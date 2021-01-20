@@ -27,7 +27,7 @@ const Skeleton = () => (
   </div>
 );
 
-export const FavoriteArtists: FC = () => {
+export const FavoriteGenres: FC = () => {
   const {
     data: genres,
     isLoading: isGenreLoading,

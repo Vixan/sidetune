@@ -16,8 +16,9 @@ import { AuthProvider } from "../contexts/AuthContext";
 import { SignIn } from "./SignIn";
 import { PrivateRoute } from "../components/PrivateRoute";
 import { UserSettings } from "./UserSettings";
-import { FavoriteArtists } from "./FavoriteGenres";
+import { FavoriteGenres } from "./FavoriteGenres";
 import { TopAlbums } from "./TopAlbums";
+import { FavoriteAlbums } from "./FavoriteAlbums";
 
 const queryCache = new QueryCache({
   defaultConfig: {
@@ -50,7 +51,11 @@ export const App: FC<{}> = () => {
                 </PrivateRoute>
 
                 <PrivateRoute exact path="/favorite-genres">
-                  <FavoriteArtists />
+                  <FavoriteGenres />
+                </PrivateRoute>
+
+                <PrivateRoute exact path="/favorite-albums">
+                  <FavoriteAlbums />
                 </PrivateRoute>
 
                 <PrivateRoute exact path="/top-albums/:genreId">

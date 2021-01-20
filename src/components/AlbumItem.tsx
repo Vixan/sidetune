@@ -1,15 +1,17 @@
 import React, { FC } from "react";
 import { Link } from "react-router-dom";
-import { Album } from "../models/Album";
+import { AlbumDto } from "../models/Album";
 
 interface Props {
-  album: Album;
+  album: AlbumDto;
   gap?: number;
 }
 
 export const AlbumItem: FC<Props> = ({ album, gap = 0 }) => {
   return (
-    <div className="w-full text-xs text-left outline-none hover:opacity-75" title={album.title}>
+    <div
+      className="w-full text-xs text-left outline-none hover:opacity-75"
+      title={album.title}>
       {/* TODO: Fix mouse button release navigating to link */}
       <Link to={`/album/${album.id}`}>
         <div className="flex-row space-y-3" style={{ marginRight: gap }}>

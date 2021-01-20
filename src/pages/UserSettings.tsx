@@ -1,16 +1,18 @@
 import React, { FC, useEffect, useState } from "react";
 import { BookOpen, ChevronLeft, LogOut, Settings, User } from "react-feather";
+import { useDocumentDataOnce } from "react-firebase-hooks/firestore";
 import { Link, useHistory } from "react-router-dom";
+import { getUserDocumentByUid } from "../api/firestoreService";
 import { Button } from "../components/Button";
 import { useAuthContext } from "../contexts/AuthContext";
+import { UserDto } from "../models/User";
 
 const Skeleton = () => (
-  <div className="flex flex-col items-center justify-center pl-12 pr-12 mb-4 space-y-3 animate-pulse">
-    <div className="w-48 h-48 bg-gray-600 rounded-lg"></div>
-    <div className="flex flex-col items-center w-full space-y-2">
+  <div className="flex flex-col items-center justify-center pl-12 pr-12 mb-4 space-y-4 animate-pulse">
+    <div className="w-32 h-32 bg-gray-600 rounded-full"></div>
+    <div className="flex flex-col items-center w-full space-y-8">
       <div className="w-1/4 h-4 bg-gray-600 rounded"></div>
       <div className="w-3/4 h-4 bg-gray-600 rounded"></div>
-      <div className="w-2/4 h-4 bg-gray-600 rounded"></div>
     </div>
   </div>
 );
@@ -19,6 +21,10 @@ export const UserSettings: FC = () => {
   const { currentUser, signOut, loading: isUserLoading } = useAuthContext();
   const history = useHistory();
   const [isTransitioning, setTransitioning] = useState(false);
+
+  const [user, isUserDataLoading] = useDocumentDataOnce<UserDto>(
+    currentUser && getUserDocumentByUid(currentUser?.uid)
+  );
 
   useEffect(() => {
     setTransitioning(true);
@@ -49,9 +55,9 @@ export const UserSettings: FC = () => {
         <div className="w-10 ml-auto text-lg font-bold"></div>
       </section>
 
-      {isUserLoading && <Skeleton />}
+      {(isUserLoading || isUserDataLoading) && <Skeleton />}
 
-      {currentUser && (
+      {user && currentUser && (
         <section className="flex flex-col items-center space-y-16">
           <div className="flex flex-col items-center w-full space-y-4">
             <div className="w-32 h-32 bg-teal-500 rounded-full">
@@ -66,6 +72,16 @@ export const UserSettings: FC = () => {
             </div>
             <div className="text-md">
               <span>{currentUser.displayName}</span>
+            </div>
+
+            <div className="flex items-center justify-center w-full space-x-2 text-sm text-gray-600">
+              <Link
+                to="/favorite-albums"
+                className="text-teal-500 hover:text-teal-400">
+                <span>{user?.favoriteAlbums?.length} favorite albums</span>
+              </Link>
+              <span className="text-xl">·</span>
+              <span>{user?.favoriteTracks?.length} favorite tracks</span>
             </div>
           </div>
 

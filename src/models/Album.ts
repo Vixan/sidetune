@@ -18,15 +18,8 @@ export interface Album {
   tracks: { data: Track[] };
 }
 
-// export interface AlbumDto {
-//   id: number;
-//   release_date: string;
-//   title: string;
-//   artist: ArtistDto;
-//   genres: GenreDto[];
-// }
-
-export interface AlbumDto extends Pick<Album, "id" | "release_date" | "title"> {
+export interface AlbumDto
+  extends Pick<Album, "id" | "release_date" | "title" | "cover_medium"> {
   artist: ArtistDto;
   genres: GenreDto[];
 }

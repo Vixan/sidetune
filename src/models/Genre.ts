@@ -6,8 +6,3 @@ export interface Genre {
 }
 
 export interface GenreDto extends Pick<Genre, "id" | "name"> {}
-
-// export interface GenreDto {
-//   id: number;
-//   name: string;
-// }

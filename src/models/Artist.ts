@@ -7,9 +7,4 @@ export interface Artist {
   link: string;
 }
 
-// export interface ArtistDto {
-//   id: number;
-//   name: string;
-// }
-
 export interface ArtistDto extends Pick<Artist, "id" | "name"> {}

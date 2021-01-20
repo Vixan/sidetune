@@ -60,7 +60,14 @@ export const TopAlbumsSection: FC<Props> = ({ genre }) => {
             pagination={false}
             preventDefaultTouchmoveEvent={true}>
             {albumsPage?.data.map(album => (
-              <AlbumItem album={album} key={album.id} gap={16} />
+              <AlbumItem
+                album={{
+                  ...album,
+                  genres: album.genres?.data || []
+                }}
+                key={album.id}
+                gap={16}
+              />
             ))}
           </Carousel>
         )}

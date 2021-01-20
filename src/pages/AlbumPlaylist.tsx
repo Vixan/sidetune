@@ -7,11 +7,9 @@ import {
   Plus,
   Shuffle
 } from "react-feather";
-import {
-  useDocumentData
-} from "react-firebase-hooks/firestore";
+import { useDocumentData } from "react-firebase-hooks/firestore";
 import { useQuery } from "react-query";
-import { Link, useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { getAlbumPlaylist } from "../api/deezerApiService";
 import {
   getUserDocumentByUid,
@@ -57,6 +55,8 @@ export const AlbumPlaylist: FC<{}> = () => {
     currentUser && getUserDocumentByUid(currentUser?.uid)
   );
 
+  const history = useHistory();
+
   useEffect(() => {
     setTransitioning(true);
   }, []);
@@ -81,6 +81,7 @@ export const AlbumPlaylist: FC<{}> = () => {
                 id: album.artist.id,
                 name: album.artist.name
               },
+              cover_medium: album.cover_medium,
               title: album.title,
               release_date: album.release_date,
               genres: album.genres.data.map(g => ({ id: g.id, name: g.name }))
@@ -101,11 +102,11 @@ export const AlbumPlaylist: FC<{}> = () => {
     }
     `}>
       <div className="flex mb-4">
-        <Link
-          to="/"
-          className="inline-flex items-center p-2 rounded-full hover:bg-gray-700">
+        <Button
+          className="p-2 text-white hover:bg-gray-700"
+          onClick={() => history.goBack()}>
           <ChevronLeft />
-        </Link>
+        </Button>
         <Button
           className={`p-2 ml-auto hover:bg-gray-700 ${
             isAlbumUserFavorite ? "text-red-500" : ""

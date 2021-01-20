@@ -1,17 +1,17 @@
 import React, { FC, useEffect, useState } from "react";
 import { ChevronLeft } from "react-feather";
+import { useDocumentDataOnce } from "react-firebase-hooks/firestore";
 import { useQuery } from "react-query";
 import { useHistory, useParams } from "react-router-dom";
-import { getGenreById, getTopAlbums } from "../api/deezerApiService";
+import { getGenreById } from "../api/deezerApiService";
+import { getUserDocumentByUid } from "../api/firestoreService";
 import { AlbumItem } from "../components/AlbumItem";
 import { Button } from "../components/Button";
 import { UnexpectedErrorMessage } from "../components/UnexpectedErrorMessage";
-import { Album } from "../models/Album";
+import { useAuthContext } from "../contexts/AuthContext";
 import { Genre } from "../models/Genre";
-import { PagedResponse } from "../types/apiResponse";
+import { UserDto } from "../models/User";
 import { MAX_CACHE_STALE_TIME } from "../utils/caching";
-
-const MAX_ALBUMS_COUNT = 100;
 
 const Skeleton = () => (
   <div className="grid w-full grid-cols-3 gap-4">
@@ -29,7 +29,7 @@ interface NavigationParams {
   genreId: string;
 }
 
-export const TopAlbums: FC = () => {
+export const FavoriteAlbums: FC = () => {
   const { genreId } = useParams<NavigationParams>();
 
   const { data: genre } = useQuery<Genre>(
@@ -40,16 +40,16 @@ export const TopAlbums: FC = () => {
     }
   );
 
-  const { data: albumsPage, isLoading, isError } = useQuery<
-    PagedResponse<Album[]>
-  >(
-    `top${MAX_ALBUMS_COUNT}${genre?.name || "All"}Albums`,
-    async () => await getTopAlbums(genre, MAX_ALBUMS_COUNT),
-    {
-      staleTime: MAX_CACHE_STALE_TIME,
-      enabled: !!genre
-    }
+  const {
+    currentUser,
+    loading: isUserLoading,
+    error: userError
+  } = useAuthContext();
+
+  const [user] = useDocumentDataOnce<UserDto>(
+    currentUser && getUserDocumentByUid(currentUser?.uid)
   );
+
   const history = useHistory();
 
   const [isTransitioning, setTransitioning] = useState(false);
@@ -75,30 +75,20 @@ export const TopAlbums: FC = () => {
         </Button>
 
         <div className="flex items-center space-x-2 text-lg font-bold">
-          Top {MAX_ALBUMS_COUNT}{" "}
-          {!genre?.name || genre.name === "All" ? "Trending" : genre.name}{" "}
-          Albums
+          Your Favorite Albums
         </div>
         <div className="w-10 ml-auto text-lg font-bold"></div>
       </section>
 
       <section className="flex flex-col items-center text-gray-600 body-font">
-        {isLoading && <Skeleton />}
+        {isUserLoading && <Skeleton />}
 
-        {isError && (
-          <UnexpectedErrorMessage description="Could not load top albums" />
-        )}
+        {userError && <UnexpectedErrorMessage description={userError} />}
 
-        {albumsPage?.data && (
+        {user?.favoriteAlbums && (
           <div className="grid grid-cols-3 gap-4">
-            {albumsPage.data.map(album => (
-              <AlbumItem
-                key={album.id}
-                album={{
-                  ...album,
-                  genres: album.genres?.data || []
-                }}
-              />
+            {user.favoriteAlbums.map(album => (
+              <AlbumItem key={album.id} album={album} />
             ))}
           </div>
         )}
