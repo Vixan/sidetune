@@ -1,10 +1,10 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
-import { Genre } from "../models/Genre";
+import { Genre, GenreDto } from "../models/Genre";
 import { Log, LogLevel } from "../models/Log";
-import { User } from "../models/User";
-import { UserFavoriteGenre } from "../models/UserFavoriteGenre";
-
+import { User, UserDto } from "../models/User";
+import { AlbumDto } from "../models/Album";
+import { TrackDto } from "../models/Track";
 
 export const logError = (message: string, userUId?: string) => {
   const firestore = firebase.firestore();
@@ -27,13 +27,15 @@ export const tryCreateAuthAssociatedUser = async (user: firebase.User) => {
   if (!currentUserInDb?.exists) {
     const userDocument: User = {
       createdDate: firebase.firestore.FieldValue.serverTimestamp(),
-      favoriteGenres: []
+      favoriteGenres: [],
+      favoriteTracks: [],
+      favoriteAlbums: []
     };
     usersCollection.doc(user.uid).set(userDocument);
   }
 };
 
-export const trySetUserFavoriteGenres = async (
+export const tryUpdateUserFavoriteGenres = async (
   user: firebase.User,
   favoriteGenres: Genre[]
 ) => {
@@ -42,7 +44,7 @@ export const trySetUserFavoriteGenres = async (
 
   try {
     usersCollection.doc(user.uid).update({
-      favoriteGenres: favoriteGenres.map<UserFavoriteGenre>(genre => ({
+      favoriteGenres: favoriteGenres.map<GenreDto>(genre => ({
         id: genre.id,
         name: genre.name
       }))
@@ -52,8 +54,40 @@ export const trySetUserFavoriteGenres = async (
   }
 };
 
+export const tryUpdateUserFavoriteAlbums = async (
+  user: firebase.User,
+  favoriteAlbums: AlbumDto[]
+) => {
+  const firestore = firebase.firestore();
+  const usersCollection = firestore.collection("users");
+
+  try {
+    usersCollection.doc(user.uid).update({
+      favoriteAlbums: favoriteAlbums
+    });
+  } catch (exception) {
+    logError(exception?.message, user.uid);
+  }
+};
+
+export const tryUpdateUserFavoriteTracks = async (
+  user: firebase.User,
+  favoriteTracks: TrackDto[]
+) => {
+  const firestore = firebase.firestore();
+  const usersCollection = firestore.collection("users");
+
+  try {
+    usersCollection.doc(user.uid).update({
+      favoriteTracks: favoriteTracks
+    });
+  } catch (exception) {
+    logError(exception?.message, user.uid);
+  }
+};
+
 export const getUserDocumentByUid = (uid: string) => {
   const firestore = firebase.firestore();
-  
+
   return firestore.collection("users").doc(uid);
 };

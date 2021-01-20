@@ -7,12 +7,21 @@ import {
   Plus,
   Shuffle
 } from "react-feather";
+import {
+  useDocumentData
+} from "react-firebase-hooks/firestore";
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
 import { getAlbumPlaylist } from "../api/deezerApiService";
+import {
+  getUserDocumentByUid,
+  tryUpdateUserFavoriteAlbums
+} from "../api/firestoreService";
 import { Button } from "../components/Button";
 import { UnexpectedErrorMessage } from "../components/UnexpectedErrorMessage";
+import { useAuthContext } from "../contexts/AuthContext";
 import { Album } from "../models/Album";
+import { UserDto } from "../models/User";
 import { MAX_CACHE_STALE_TIME } from "../utils/caching";
 import { formatSecondsToHms } from "../utils/formatting";
 import { getRandomNumber } from "../utils/randomUtils";
@@ -43,12 +52,44 @@ export const AlbumPlaylist: FC<{}> = () => {
     }
   );
 
+  const { currentUser } = useAuthContext();
+  const [user] = useDocumentData<UserDto>(
+    currentUser && getUserDocumentByUid(currentUser?.uid)
+  );
+
   useEffect(() => {
     setTransitioning(true);
   }, []);
 
   const tracks = album?.tracks?.data;
-  const randomTrackId = tracks ? tracks[getRandomNumber(tracks.length)].id : null;
+  const randomTrackId = tracks
+    ? tracks[getRandomNumber(tracks.length)].id
+    : null;
+
+  const isAlbumUserFavorite =
+    user?.favoriteAlbums?.some(a => a.id === parseInt(albumId)) ?? false;
+
+  const toggleFavorite = async () => {
+    if (currentUser && user && album) {
+      const favoriteAlbums = isAlbumUserFavorite
+        ? user.favoriteAlbums.filter(a => a.id !== album.id)
+        : [
+            ...user.favoriteAlbums,
+            {
+              id: album.id,
+              artist: {
+                id: album.artist.id,
+                name: album.artist.name
+              },
+              title: album.title,
+              release_date: album.release_date,
+              genres: album.genres.data.map(g => ({ id: g.id, name: g.name }))
+            }
+          ];
+
+      await tryUpdateUserFavoriteAlbums(currentUser, favoriteAlbums);
+    }
+  };
 
   return (
     <div
@@ -65,8 +106,12 @@ export const AlbumPlaylist: FC<{}> = () => {
           className="inline-flex items-center p-2 rounded-full hover:bg-gray-700">
           <ChevronLeft />
         </Link>
-        <Button className="p-2 ml-auto hover:bg-gray-700">
-          <Heart />
+        <Button
+          className={`p-2 ml-auto hover:bg-gray-700 ${
+            isAlbumUserFavorite ? "text-red-500" : ""
+          }`}
+          onClick={toggleFavorite}>
+          <Heart className={`${isAlbumUserFavorite ? "fill-current" : ""}`} />
         </Button>
       </div>
 

@@ -6,3 +6,10 @@ export interface Artist {
   tracklist: string;
   link: string;
 }
+
+// export interface ArtistDto {
+//   id: number;
+//   name: string;
+// }
+
+export interface ArtistDto extends Pick<Artist, "id" | "name"> {}

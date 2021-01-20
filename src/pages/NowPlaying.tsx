@@ -26,11 +26,18 @@ import { UnexpectedErrorMessage } from "../components/UnexpectedErrorMessage";
 import { useAudioContext } from "../contexts/AudioContext";
 import { usePlaybackContext } from "../contexts/PlaybackContext";
 import { Album } from "../models/Album";
-import { Track } from "../models/Track";
+import { Track, TrackDto } from "../models/Track";
 import { MAX_CACHE_STALE_TIME } from "../utils/caching";
 import { formatSecondsToHms } from "../utils/formatting";
 import { getShuffledArray } from "../utils/randomUtils";
 import { useLocationQueryString } from "../utils/routerUtils";
+import { useAuthContext } from "../contexts/AuthContext";
+import { useDocumentData } from "react-firebase-hooks/firestore";
+import { UserDto } from "../models/User";
+import {
+  getUserDocumentByUid,
+  tryUpdateUserFavoriteTracks
+} from "../api/firestoreService";
 
 interface NavigationParams {
   albumId: string;
@@ -84,6 +91,11 @@ export const NowPlaying: FC<{}> = () => {
   useClickAway(ref, () => {
     setLyricsPaneOpened(false);
   });
+
+  const { currentUser } = useAuthContext();
+  const [user] = useDocumentData<UserDto>(
+    currentUser && getUserDocumentByUid(currentUser?.uid)
+  );
 
   const { data: track, isLoading, isError, error } = useQuery<Track>(
     ["track", trackId],
@@ -192,6 +204,25 @@ export const NowPlaying: FC<{}> = () => {
     setReplayTrack(!replayTrack);
   };
 
+  const isTrackUserFavorite =
+    user?.favoriteTracks?.some(a => a.id === parseInt(trackId)) ?? false;
+
+  const toggleFavorite = async () => {
+    if (currentUser && user && track) {
+      const favoriteTracks: TrackDto[] = isTrackUserFavorite
+        ? user.favoriteTracks.filter(a => a.id !== track.id)
+        : [
+            ...user.favoriteTracks,
+            {
+              id: track.id,
+              title: track.title
+            }
+          ];
+
+      await tryUpdateUserFavoriteTracks(currentUser, favoriteTracks);
+    }
+  };
+
   return (
     <div
       className={`transition-all duration-500
@@ -211,8 +242,12 @@ export const NowPlaying: FC<{}> = () => {
           <Button className="p-2 hover:bg-gray-700">
             <AlignLeft onClick={() => setLyricsPaneOpened(true)} />
           </Button>
-          <Button className="p-2 hover:bg-gray-700">
-            <Heart />
+          <Button
+            className={`p-2 ml-auto hover:bg-gray-700 ${
+              isTrackUserFavorite ? "text-red-500" : ""
+            }`}
+            onClick={toggleFavorite}>
+            <Heart className={`${isTrackUserFavorite ? "fill-current" : ""}`} />
           </Button>
         </div>
       </div>

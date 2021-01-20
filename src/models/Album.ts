@@ -1,5 +1,5 @@
-import { Artist } from "./Artist";
-import { Genre } from "./Genre";
+import { Artist, ArtistDto } from "./Artist";
+import { Genre, GenreDto } from "./Genre";
 import { Track } from "./Track";
 
 export interface Album {
@@ -16,4 +16,17 @@ export interface Album {
   title: string;
   tracklist: string;
   tracks: { data: Track[] };
+}
+
+// export interface AlbumDto {
+//   id: number;
+//   release_date: string;
+//   title: string;
+//   artist: ArtistDto;
+//   genres: GenreDto[];
+// }
+
+export interface AlbumDto extends Pick<Album, "id" | "release_date" | "title"> {
+  artist: ArtistDto;
+  genres: GenreDto[];
 }

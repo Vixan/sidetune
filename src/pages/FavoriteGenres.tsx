@@ -6,7 +6,7 @@ import { useHistory } from "react-router-dom";
 import { getGenres } from "../api/deezerApiService";
 import {
   getUserDocumentByUid,
-  trySetUserFavoriteGenres
+  tryUpdateUserFavoriteGenres
 } from "../api/firestoreService";
 import { Button } from "../components/Button";
 import { GenreItem } from "../components/GenreItem";
@@ -40,11 +40,6 @@ export const FavoriteArtists: FC = () => {
   const [user, isUserLoading, userError] = useDocumentDataOnce<User>(
     currentUser && getUserDocumentByUid(currentUser?.uid)
   );
-  const [isTransitioning, setTransitioning] = useState(false);
-
-  useEffect(() => {
-    setTransitioning(true);
-  }, []);
 
   const history = useHistory();
 
@@ -58,7 +53,7 @@ export const FavoriteArtists: FC = () => {
 
   const onContinue = async () => {
     if (currentUser) {
-      await trySetUserFavoriteGenres(currentUser, selectedGenres);
+      await tryUpdateUserFavoriteGenres(currentUser, selectedGenres);
 
       history.push("/");
     }
