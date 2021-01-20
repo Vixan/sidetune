@@ -1,11 +1,11 @@
 import React, { FC } from "react";
-import { TopAlbumsSection } from "../components/TopAlbumsSection";
 import { Search, User as UserIcon } from "react-feather";
-import { Link } from "react-router-dom";
-import { useAuthContext } from "../contexts/AuthContext";
 import { useDocumentDataOnce } from "react-firebase-hooks/firestore";
+import { Link } from "react-router-dom";
 import { getUserDocumentByUid } from "../api/firestoreService";
+import { TopAlbumsSection } from "../components/TopAlbumsSection";
 import { UnexpectedErrorMessage } from "../components/UnexpectedErrorMessage";
+import { useAuthContext } from "../contexts/AuthContext";
 import { User } from "../models/User";
 import { getRandomNumber } from "../utils/randomUtils";
 

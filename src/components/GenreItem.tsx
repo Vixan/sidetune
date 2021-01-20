@@ -37,7 +37,7 @@ export const GenreItem: FC<GenreItemProps> = ({
           />
         )}
         <div className="w-full space-y-1 overflow-hidden text-center text-white whitespace-no-wrap">
-          <p className="text-gray-600 truncate">{name}</p>
+          <p className="text-white truncate">{name}</p>
         </div>
       </div>
     </div>

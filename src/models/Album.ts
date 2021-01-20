@@ -5,6 +5,7 @@ import { Track } from "./Track";
 export interface Album {
   artist: Artist;
   cover_big: string;
+  cover_medium: string;
   duration: number;
   explicit_lyrics: boolean;
   genres: { data: Genre[] };

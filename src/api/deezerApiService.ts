@@ -1,17 +1,17 @@
 import { Album } from "../models/Album";
 import { PagedResponse } from "../types/apiResponse";
 import { deezerService } from "./apiService";
-import { TopAlbum } from "../models/TopAlbum";
 import { Genre } from "../models/Genre";
 import { Track } from "../models/Track";
 
 const ALL_GENRE_DEEZER_ID = 0;
 
 export const getTopAlbums = async (
-  genre?: Genre
-): Promise<PagedResponse<TopAlbum[]>> => {
-  const response = await deezerService.get<PagedResponse<TopAlbum[]>>(
-    `/chart/${genre?.id || ALL_GENRE_DEEZER_ID}/albums`
+  genre?: Genre,
+  limit: number = 10
+): Promise<PagedResponse<Album[]>> => {
+  const response = await deezerService.get<PagedResponse<Album[]>>(
+    `/chart/${genre?.id || ALL_GENRE_DEEZER_ID}/albums?limit=${limit}`
   );
 
   return response.data;
@@ -33,4 +33,10 @@ export const getGenres = async (): Promise<Genre[]> => {
   const response = await deezerService.get<{ data: Genre[] }>(`/genre`);
 
   return response.data.data;
+};
+
+export const getGenreById = async (id: number): Promise<Genre> => {
+  const response = await deezerService.get<Genre>(`/genre/${id}`);
+
+  return response.data;
 };

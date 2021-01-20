@@ -5,9 +5,9 @@ import { Log, LogLevel } from "../models/Log";
 import { User } from "../models/User";
 import { UserFavoriteGenre } from "../models/UserFavoriteGenre";
 
-const firestore = firebase.firestore();
 
 export const logError = (message: string, userUId?: string) => {
+  const firestore = firebase.firestore();
   const usersCollection = firestore.collection("logs");
   const log: Log = {
     level: LogLevel.Error,
@@ -20,6 +20,7 @@ export const logError = (message: string, userUId?: string) => {
 };
 
 export const tryCreateAuthAssociatedUser = async (user: firebase.User) => {
+  const firestore = firebase.firestore();
   const usersCollection = firestore.collection("users");
   const currentUserInDb = await usersCollection.doc(user.uid).get();
 
@@ -36,6 +37,7 @@ export const trySetUserFavoriteGenres = async (
   user: firebase.User,
   favoriteGenres: Genre[]
 ) => {
+  const firestore = firebase.firestore();
   const usersCollection = firestore.collection("users");
 
   try {
@@ -51,5 +53,7 @@ export const trySetUserFavoriteGenres = async (
 };
 
 export const getUserDocumentByUid = (uid: string) => {
+  const firestore = firebase.firestore();
+  
   return firestore.collection("users").doc(uid);
 };

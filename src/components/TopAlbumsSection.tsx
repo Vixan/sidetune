@@ -1,20 +1,20 @@
 import React, { FC } from "react";
+import Carousel from "react-elastic-carousel";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { getTopAlbums } from "../api/deezerApiService";
-import Carousel from "react-elastic-carousel";
-import { PagedResponse } from "../types/apiResponse";
-import { TopAlbum } from "../models/TopAlbum";
-import { CarouselTopAlbum, CarouselTopAlbumSkeleton } from "./CarouselTopAlbum";
-import { MAX_CACHE_STALE_TIME } from "../utils/caching";
-import { UnexpectedErrorMessage } from "./UnexpectedErrorMessage";
+import { Album } from "../models/Album";
 import { Genre } from "../models/Genre";
+import { PagedResponse } from "../types/apiResponse";
+import { MAX_CACHE_STALE_TIME } from "../utils/caching";
+import { AlbumItem, AlbumItemSkeleton } from "./AlbumItem";
+import { UnexpectedErrorMessage } from "./UnexpectedErrorMessage";
 
 const Skeleton = () => (
   <div className="flex w-full text-xs text-left animate-pulse">
-    <CarouselTopAlbumSkeleton />
-    <CarouselTopAlbumSkeleton />
-    <CarouselTopAlbumSkeleton />
+    <AlbumItemSkeleton />
+    <AlbumItemSkeleton />
+    <AlbumItemSkeleton />
   </div>
 );
 
@@ -24,10 +24,14 @@ interface Props {
 
 export const TopAlbumsSection: FC<Props> = ({ genre }) => {
   const { data: albumsPage, isLoading, isError } = useQuery<
-    PagedResponse<TopAlbum[]>
-  >(`top${genre?.name || "All"}Albums`, async () => await getTopAlbums(genre), {
-    staleTime: MAX_CACHE_STALE_TIME
-  });
+    PagedResponse<Album[]>
+  >(
+    `top${genre?.name || "Trending"}Albums`,
+    async () => await getTopAlbums(genre),
+    {
+      staleTime: MAX_CACHE_STALE_TIME
+    }
+  );
 
   return (
     <>
@@ -37,9 +41,9 @@ export const TopAlbumsSection: FC<Props> = ({ genre }) => {
             Top {genre?.name || "All"} Albums
           </h1>
           <Link
-            to="/"
+            to={`/top-albums/${genre?.id || 0}`}
             className="ml-auto text-sm text-gray-600 hover:text-gray-500">
-            View all
+            View more
           </Link>
         </div>
 
@@ -56,7 +60,7 @@ export const TopAlbumsSection: FC<Props> = ({ genre }) => {
             pagination={false}
             preventDefaultTouchmoveEvent={true}>
             {albumsPage?.data.map(album => (
-              <CarouselTopAlbum album={album} key={album.id} />
+              <AlbumItem album={album} key={album.id} gap={16} />
             ))}
           </Carousel>
         )}

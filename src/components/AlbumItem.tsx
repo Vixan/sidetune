@@ -1,17 +1,18 @@
 import React, { FC } from "react";
 import { Link } from "react-router-dom";
-import { TopAlbum } from "../models/TopAlbum";
+import { Album } from "../models/Album";
 
 interface Props {
-  album: TopAlbum;
+  album: Album;
+  gap?: number;
 }
 
-export const CarouselTopAlbum: FC<Props> = ({ album }) => {
+export const AlbumItem: FC<Props> = ({ album, gap = 0 }) => {
   return (
-    <div className="w-full text-xs text-left outline-none">
+    <div className="w-full text-xs text-left outline-none hover:opacity-75" title={album.title}>
       {/* TODO: Fix mouse button release navigating to link */}
       <Link to={`/album/${album.id}`}>
-        <div className="flex-row mr-4 space-y-3">
+        <div className="flex-row space-y-3" style={{ marginRight: gap }}>
           <img
             src={album.cover_medium}
             alt={`${album.title} cover`}
@@ -27,7 +28,7 @@ export const CarouselTopAlbum: FC<Props> = ({ album }) => {
   );
 };
 
-export const CarouselTopAlbumSkeleton: FC<{}> = () => {
+export const AlbumItemSkeleton: FC<{}> = () => {
   return (
     <div className="flex flex-col w-1/3 mr-4 space-y-3">
       <div className="w-full h-24 bg-gray-600 rounded-lg"></div>

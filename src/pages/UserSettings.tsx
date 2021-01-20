@@ -1,9 +1,8 @@
 import React, { FC, useEffect, useState } from "react";
-import { BookOpen, ChevronLeft, Settings, User } from "react-feather";
+import { BookOpen, ChevronLeft, LogOut, Settings, User } from "react-feather";
 import { Link, useHistory } from "react-router-dom";
 import { Button } from "../components/Button";
 import { useAuthContext } from "../contexts/AuthContext";
-import { LogOut, Heart } from "react-feather";
 
 const Skeleton = () => (
   <div className="flex flex-col items-center justify-center pl-12 pr-12 mb-4 space-y-3 animate-pulse">
