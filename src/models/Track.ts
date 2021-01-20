@@ -1,5 +1,5 @@
-import { Artist, ArtistDto } from "./Artist";
-import { Album, AlbumDto } from "./Album";
+import { Album } from "./Album";
+import { Artist } from "./Artist";
 
 export interface Track {
   id: number;

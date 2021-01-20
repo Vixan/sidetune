@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Search, User as UserIcon } from "react-feather";
+import { User as UserIcon } from "react-feather";
 import { useDocumentDataOnce } from "react-firebase-hooks/firestore";
 import { Link } from "react-router-dom";
 import { getUserDocumentByUid } from "../api/firestoreService";
@@ -35,14 +35,10 @@ export const Home: FC<{}> = () => {
 
         <span className="ml-auto text-lg font-bold">Sidetune</span>
 
-        <div className="w-10 h-10 ml-auto rounded-full hover:bg-gray-700">
-          <Link to="/search">
-            <Search className="w-full h-full p-3 text-white" />
-          </Link>
-        </div>
+        <div className="w-10 h-10 ml-auto rounded-full hover:bg-gray-700"></div>
       </header>
 
-      {userError && (
+      {!isUserLoading && userError && (
         <UnexpectedErrorMessage description={userError.message as string} />
       )}
 

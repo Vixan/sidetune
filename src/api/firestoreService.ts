@@ -1,10 +1,10 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
+import { AlbumDto } from "../models/Album";
 import { Genre, GenreDto } from "../models/Genre";
 import { Log, LogLevel } from "../models/Log";
-import { User, UserDto } from "../models/User";
-import { AlbumDto } from "../models/Album";
 import { TrackDto } from "../models/Track";
+import { User } from "../models/User";
 
 export const logError = (message: string, userUId?: string) => {
   const firestore = firebase.firestore();

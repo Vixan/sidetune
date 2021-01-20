@@ -1,17 +1,13 @@
 import React, { FC, useEffect, useState } from "react";
 import { ChevronLeft } from "react-feather";
 import { useDocumentDataOnce } from "react-firebase-hooks/firestore";
-import { useQuery } from "react-query";
-import { useHistory, useParams } from "react-router-dom";
-import { getGenreById } from "../api/deezerApiService";
+import { useHistory } from "react-router-dom";
 import { getUserDocumentByUid } from "../api/firestoreService";
 import { AlbumItem } from "../components/AlbumItem";
 import { Button } from "../components/Button";
 import { UnexpectedErrorMessage } from "../components/UnexpectedErrorMessage";
 import { useAuthContext } from "../contexts/AuthContext";
-import { Genre } from "../models/Genre";
 import { UserDto } from "../models/User";
-import { MAX_CACHE_STALE_TIME } from "../utils/caching";
 
 const Skeleton = () => (
   <div className="grid w-full grid-cols-3 gap-4">
@@ -25,21 +21,7 @@ const Skeleton = () => (
   </div>
 );
 
-interface NavigationParams {
-  genreId: string;
-}
-
 export const FavoriteAlbums: FC = () => {
-  const { genreId } = useParams<NavigationParams>();
-
-  const { data: genre } = useQuery<Genre>(
-    ["genre", genreId],
-    async () => await getGenreById(parseInt(genreId)),
-    {
-      staleTime: MAX_CACHE_STALE_TIME
-    }
-  );
-
   const {
     currentUser,
     loading: isUserLoading,
